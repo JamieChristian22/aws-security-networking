@@ -1,0 +1,42 @@
+AWS CloudWatch Agent Installation & Monitoring Lab
+
+Objective:
+Install and configure the Amazon CloudWatch Agent on an EC2 instance to collect and view metrics (CPU, memory, disk usage, etc.) in CloudWatch Metrics.
+
+Steps:
+1. Launch EC2 Instance
+   - Region: N. Virginia (us-east-1)
+   - AMI: Amazon Linux 2 (64-bit x86)
+   - Instance type: t2.micro
+   - Key pair: Create new key and download PEM
+   - Security Group: Allow SSH (22) from Anywhere
+   - IAM role: task124_role_<RANDOM_NUMBER>
+
+2. Connect to EC2 via SSH:
+   chmod 400 your-key.pem
+   ssh -i "your-key.pem" ec2-user@<Public-IP>
+
+3. Install CloudWatch Agent:
+   wget https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
+   sudo rpm -U ./amazon-cloudwatch-agent.rpm
+
+4. Configure CloudWatch Agent:
+   sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+   # Follow setup wizard options as documented
+
+5. Start Agent:
+   sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s
+
+6. Check Agent Status:
+   systemctl status amazon-cloudwatch-agent
+
+7. View Metrics in CloudWatch:
+   - Go to CloudWatch > Metrics > CWAgent
+   - Select InstanceId > Metrics (cpu, mem, disk)
+
+Completion Checklist:
+✅ EC2 instance launched
+✅ SSH access verified
+✅ CloudWatch Agent installed
+✅ Agent configured and started
+✅ Metrics visible in CloudWatch

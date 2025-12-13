@@ -1,4 +1,4 @@
-# AWS Security + Networking Portfolio (Job-Ready)
+# AWS Security + Networking Portfolio 
 
 This repo contains **4 real-world AWS security & networking projects** designed to mirror what cloud/security engineers do in production: segmented networks, centralized security logging, serverless hardening, and identity governance.
 

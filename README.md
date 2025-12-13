@@ -93,7 +93,89 @@ Secure serverless architecture
 Least privilege & logging
 
 ---
+## 🔍 Evidence of Deployment (AWS Console)
 
+This repository contains **verified AWS infrastructure deployments**, demonstrating hands-on experience with cloud security, networking, IAM, and serverless architectures.  
+All components shown below were **created, configured, and validated directly in AWS**.
+
+---
+
+### 🌐 VPC & Network Security
+
+**Web Application Security Group (WebAppSG)**  
+- Explicit inbound rules for HTTP (80) and HTTPS (443)  
+- Scoped to a specific VPC  
+- Demonstrates security group–based perimeter enforcement
+
+**AWS Services:** Amazon VPC, Security Groups
+
+![VPC Security Group – WebAppSG](docs/evidence/VPC_SecurityGroup_WebAppSG.png)
+
+---
+
+### 🔐 Identity & Access Management (IAM)
+
+**IAM Policies & Roles**
+- Custom IAM policies created
+- Least-privilege permissions enforced
+- Service roles for Lambda, API Gateway, SQS, and DynamoDB
+- Clear separation of duties via role-based access control (RBAC)
+
+**AWS Services:** IAM Policies, IAM Roles
+
+![IAM Policies](docs/evidence/iam-policies.png)  
+![IAM Roles](docs/evidence/iam-roles.png)
+
+---
+
+### ⚙️ Serverless Compute & Event Processing
+
+**AWS Lambda with SQS Integration**
+- Lambda function deployed successfully
+- Event-driven architecture using Amazon SQS
+- IAM role attached for controlled service access
+- Decoupled ingestion and processing layer
+
+**AWS Services:** AWS Lambda, Amazon SQS
+
+![Lambda with SQS Trigger](docs/evidence/lambda-sqs.png)
+
+---
+
+### 🗄️ Data & Analytics (Validated)
+
+**PostgreSQL, Athena, and API Ingestion**
+- Amazon RDS PostgreSQL instance provisioned
+- API Gateway POST endpoint deployed and tested
+- Clickstream data stored in S3 and queried via Athena external tables
+- End-to-end ingestion and analytics pipeline validated
+
+**AWS Services:** API Gateway, S3, Athena, RDS (PostgreSQL)
+
+![RDS Created](docs/evidence/rds-created.png)  
+![Athena Query Success](docs/evidence/athena-query-success.png)  
+![API Gateway POST](docs/evidence/api-gateway-post.png)
+
+---
+
+### 🧠 Why This Matters
+
+These screenshots confirm that the projects in this repository are:
+
+- ✅ **Deployed in AWS (not simulated or diagram-only)**
+- ✅ **Security-first (IAM, SGs, least privilege)**
+- ✅ **Production-aligned architectures**
+- ✅ **End-to-end tested and observable**
+
+---
+
+### 📁 Evidence Location
+
+All deployment evidence is stored here:
+
+```text
+aws-security-networking-portfolio/docs/evidence/
+---
 ## 📌 How to Deploy
 
 Each project contains its own README with instructions.

@@ -112,5 +112,5 @@ terraform apply -var-file=dev.tfvars
 ## 📬 Contact
 
 **Jamie Christian II**  
-📧 Jamiechristian331@gmail.com  
+📧 Jamiechristian557@gmail.com  
 🌐 github.com/JamieChristian22

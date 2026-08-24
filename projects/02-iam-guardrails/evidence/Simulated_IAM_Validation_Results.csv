@@ -1,0 +1,7 @@
+Control,Action,Expected,Result,EvidenceType
+Boundary,CreateRoleWithoutBoundary,DENIED,Pass,Simulated policy evaluation
+SCP,StopCloudTrail,DENIED,Pass,Simulated policy evaluation
+SCP,LeaveOrganization,DENIED,Pass,Simulated policy evaluation
+ReadOnlyRole,CreateS3Bucket,DENIED,Pass,Simulated policy evaluation
+BreakGlass,AssumeWithoutMFA,DENIED,Pass,Simulated policy evaluation
+BreakGlass,AssumeApprovedMFA,ALLOWED_AND_ALERTED,Pass,Simulated policy evaluation

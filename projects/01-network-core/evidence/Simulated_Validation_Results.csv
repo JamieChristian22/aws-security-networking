@@ -1,0 +1,6 @@
+Test,Expected,Result,EvidenceType
+Dev-to-Prod direct route,Denied,Pass,Simulated architecture validation
+Spoke HTTPS egress,Allowed through inspection,Pass,Simulated architecture validation
+Prohibited egress port,Denied,Pass,Simulated architecture validation
+Firewall log event,Present,Pass,Simulated architecture validation
+Flow log reject,Present,Pass,Simulated architecture validation

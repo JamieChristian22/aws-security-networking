@@ -1,21 +1,10 @@
-# Runbook – Secure Serverless API
+# Secure API Runbook
 
-## On-call checks
-- API Gateway 5XX error rate
-- Lambda errors and duration
-- WAF blocked requests and rate limits
+## Authentication Failure Spike
+Check Cognito metrics, API authorizer failures, WAF activity, and client release changes. Confirm no credential-stuffing pattern.
 
-## Common issues
-### 401 Unauthorized
-- Verify client is sending Authorization header (Bearer token)
-- Confirm token is from this user pool and not expired
+## Lambda Error Spike
+Check logs, recent deployments, downstream DynamoDB errors, throttles, and permissions. Roll back if deployment-correlated.
 
-### 5XX Errors
-- Check Lambda logs for exceptions
-- Confirm VPC endpoints are healthy and security group allows HTTPS to endpoints
-
-## Security response
-If abuse detected:
-- Tighten WAF rate threshold
-- Add IP set block rules
-- Reduce API Gateway burst limits temporarily
+## Suspected Data Exposure
+Restrict affected role/API path, preserve logs, review CloudTrail and access patterns, identify records exposed, rotate secrets/tokens if relevant, and complete incident review.

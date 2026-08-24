@@ -1,82 +1,33 @@
-# 01 – Secure Multi-Account Network Core (Hub/Spoke + Inspection + AWS Network Firewall)
+# 01 — Secure Multi-Account Network Core
 
-## Business scenario
-A company is migrating multiple workloads to AWS. They require:
-- Segmented networks (prod/dev/shared) with centralized routing controls
-- A **central inspection layer** before internet egress
-- Consistent egress rules + domain/port restrictions
-- Clear operational runbooks for troubleshooting
+A centralized AWS networking security design using **spoke VPCs, Transit Gateway, an Inspection VPC, AWS Network Firewall, controlled egress, VPC Flow Logs, and explicit route-table policy**.
 
-This project builds a **hub/spoke** network core using:
-- VPCs for **hub** (inspection/egress) and **spokes**
-- **Transit Gateway (TGW)** for centralized routing
-- **AWS Network Firewall** for stateful inspection and egress control
-- Flow logs + CloudWatch logging for visibility
+## Business Scenario
+A growing AWS environment requires separate production, development, and shared-services networks while enforcing centralized traffic inspection and consistent outbound controls.
 
 ## Architecture
+
 ```mermaid
 flowchart LR
-  subgraph Spokes
-    DEV[Dev VPC]
-    PROD[Prod VPC]
-    SHARED[Shared Services VPC]
-  end
-
-  subgraph Hub
-    TGW[Transit Gateway]
-    INSP[Inspection VPC]
-    NFW[AWS Network Firewall]
-    IGW[Internet Gateway]
-    NAT[NAT Gateway]
-  end
-
-  DEV --> TGW
-  PROD --> TGW
-  SHARED --> TGW
-
-  TGW --> INSP --> NFW --> NAT --> IGW
+DEV[Dev VPC] --> TGW[Transit Gateway]
+PROD[Prod VPC] --> TGW
+SHARED[Shared VPC] --> TGW
+TGW --> INSP[Inspection VPC]
+INSP --> NFW[AWS Network Firewall]
+NFW --> NAT[NAT Gateway]
+NAT --> IGW[Internet Gateway]
+NFW --> LOGS[Firewall Logs]
+DEV --> FLOW[VPC Flow Logs]
+PROD --> FLOW
 ```
 
-## What gets deployed
-- 1 Transit Gateway with three attachments (dev/prod/shared)
-- 1 Inspection VPC with Network Firewall in dedicated subnets
-- TGW route tables:
-  - Spoke RT → default route to Inspection
-  - Hub RT → routes back to spokes
-- Security logging:
-  - VPC Flow Logs → CloudWatch Logs
-  - Network Firewall logs → CloudWatch Logs
+## Security Requirements
+- Production and development do not route directly to each other.
+- Internet egress traverses the inspection path.
+- Network Firewall logs are retained for investigation.
+- VPC Flow Logs capture accept/reject metadata.
+- Administrative traffic is not exposed through broad inbound rules.
+- Route tables are treated as security controls.
 
-## Terraform
-- `iac/terraform/modules/` contains reusable modules
-- `iac/terraform/envs/dev` is a deployable environment with `dev.tfvars` fully populated
-
-### Deploy
-```bash
-cd iac/terraform/envs/dev
-terraform init
-terraform plan -var-file=dev.tfvars
-terraform apply -var-file=dev.tfvars
-```
-
-### Validate
-From a test EC2 instance in Dev VPC (not created by default to reduce cost):
-1. Confirm default route points to TGW
-2. Confirm egress traffic is inspected (Network Firewall logs show flows)
-3. Confirm blocked domains/ports are blocked (see firewall policy in Terraform)
-
-Validation checklist: `docs/Validation-Checklist.md`
-
-### Destroy
-```bash
-terraform destroy -var-file=dev.tfvars
-```
-
-## Notes on cost
-- TGW and Network Firewall incur hourly charges and data processing.
-- Keep this in a sandbox and destroy when done.
-
-## Artifacts
-- Threat model: `docs/Threat-Model.md`
-- Runbook: `docs/Runbook.md`
-- Validation: `docs/Validation-Checklist.md`
+## Validation
+The evidence pack includes route-path tests, prohibited-path tests, inspection-log checks, and failure-mode scenarios. Live Reachability Analyzer screenshots are not fabricated; the included test plan defines exactly what should be proven after deployment.

@@ -1,60 +1,25 @@
-# 03 – Centralized Security Logging & Detection (CloudTrail + GuardDuty + Security Hub + OpenSearch)
+# 03 — Centralized Security Logging & Detection
 
-## Business scenario
-Security needs a practical detection pipeline that supports:
-- Central visibility into API activity and security findings
-- Queryable logs for investigations
-- Alerts for high-severity threats
+A centralized detection-engineering architecture using **CloudTrail, GuardDuty, Security Hub, EventBridge, Lambda, OpenSearch, SNS, CloudWatch, and protected S3 log storage**.
 
-This project deploys:
-- **Organization-ready baseline (single account deploy)** for:
-  - CloudTrail → S3 + CloudWatch Logs
-  - GuardDuty enabled
-  - Security Hub enabled with standards
-  - Findings streamed into **OpenSearch** for dashboards
-- CloudWatch alarms + SNS notifications for high-severity events
+## Detection Flow
 
-## Architecture
 ```mermaid
-flowchart TB
-  CT[CloudTrail] --> S3[(S3 Log Archive)]
-  CT --> CW[CloudWatch Logs]
-  GD[GuardDuty] --> SH[Security Hub]
-  SH --> EB[EventBridge Rule]
-  EB --> OS[OpenSearch Ingestion (Lambda)]
-  OS --> DSH[OpenSearch Dashboards]
-  EB --> SNS[SNS Alerts]
+flowchart LR
+CT[CloudTrail] --> S3[(Log Archive)]
+CT --> CW[CloudWatch Logs]
+GD[GuardDuty] --> SH[Security Hub]
+SH --> EB[EventBridge]
+EB --> SNS[SNS]
+EB --> L[Lambda Normalizer]
+L --> OS[(OpenSearch)]
+OS --> DASH[Dashboards]
 ```
 
-## What gets deployed
-- CloudTrail + S3 bucket (versioned + blocked public access)
-- GuardDuty detector
-- Security Hub + AWS Foundational Security Best Practices standard
-- EventBridge rules for:
-  - Security Hub findings HIGH/CRITICAL → SNS
-  - Security Hub findings → Lambda → OpenSearch (indexing)
-- OpenSearch domain (t3.small.search, encryption enabled)
-- Lambda function for ingestion (Python), least-privilege IAM role
-
-## Deploy
-```bash
-cd iac/terraform/envs/dev
-terraform init
-terraform plan -var-file=dev.tfvars
-terraform apply -var-file=dev.tfvars
-```
-
-## Validate
-- Generate a test Security Hub finding:
-  - Enable an AWS Config rule that fails (optional), or
-  - Run a GuardDuty sample findings command
-- Confirm:
-  - Email alert received for HIGH findings
-  - Finding document appears in OpenSearch index `securityhub-findings-*`
-
-Validation checklist: `docs/Validation-Checklist.md`
-
-## Artifacts
-- Threat model: `docs/Threat-Model.md`
-- Runbook: `docs/Runbook.md`
-- Lambda code: `lambda/ingest_securityhub.py`
+## Goals
+- central API audit visibility
+- high/critical finding alerts
+- searchable normalized findings
+- evidence retention
+- repeatable incident triage
+- measurable detection coverage

@@ -1,9 +1,13 @@
-# Validation Checklist – IAM Guardrails
+# IAM Guardrail Validation
 
-- [ ] CloudTrail is enabled and writing to S3
-- [ ] CloudWatch log group receives CloudTrail events
-- [ ] SNS email subscription confirmed
-- [ ] Alarm triggers on risky IAM action (test in sandbox)
-- [ ] Permission boundary exists and is attachable
-- [ ] BreakGlass role trust requires MFA
-- [ ] ReadOnlyAuditorRole can list/describe but cannot create/delete resources
+| Test | Expected |
+|---|---|
+| Create delegated role without required boundary | DENIED |
+| Attach AdministratorAccess outside approved admin process | DENIED |
+| ReadOnlyAuditor writes resource | DENIED |
+| IncidentResponder reads GuardDuty/Security Hub | ALLOWED |
+| Deployer performs approved deployment action | ALLOWED |
+| Disable CloudTrail under protected SCP | DENIED |
+| Leave AWS Organization | DENIED |
+| Assume break-glass without MFA | DENIED |
+| Assume break-glass with approved MFA context | ALLOWED + ALERTED |

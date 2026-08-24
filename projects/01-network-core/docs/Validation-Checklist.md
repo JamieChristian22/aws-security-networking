@@ -1,23 +1,14 @@
-# Validation Checklist – Network Core
+# Validation Checklist
 
-## Routing
-- [ ] Dev VPC subnets have `0.0.0.0/0` route to TGW
-- [ ] Prod VPC subnets have `0.0.0.0/0` route to TGW
-- [ ] Shared VPC subnets have `0.0.0.0/0` route to TGW
-- [ ] TGW spoke RT has `0.0.0.0/0` to inspection attachment
-- [ ] Hub RT contains routes back to spoke CIDRs
+1. Dev default route points to TGW.
+2. Prod default route points to TGW.
+3. Direct Dev→Prod route is absent.
+4. Spoke internet traffic traverses inspection.
+5. Allowed HTTPS egress succeeds.
+6. Prohibited test port is blocked.
+7. Firewall log records the test flow.
+8. VPC Flow Logs record accepted/rejected traffic.
+9. Removing the inspection route causes expected loss of outbound connectivity rather than bypass.
+10. Route restoration returns the environment to normal.
 
-## Inspection
-- [ ] Network Firewall endpoints are created in inspection subnets
-- [ ] Stateful rule group enforces: deny non-HTTPS egress by default
-- [ ] Domain allowlist/denylist is applied (if enabled)
-
-## Logging
-- [ ] Flow logs delivered to CloudWatch Logs
-- [ ] Firewall alert/flow logs delivered to CloudWatch Logs
-- [ ] Log retention is set (not infinite)
-
-## Security
-- [ ] Spokes have no IGW
-- [ ] Spokes have no NAT gateway
-- [ ] Only inspection VPC has NAT + IGW
+Record source/destination, expected result, actual result, log evidence, and timestamp for every live test.

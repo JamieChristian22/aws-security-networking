@@ -1,58 +1,70 @@
-# AWS Security + Networking Portfolio 
+# 🔐 AWS Security + Networking Portfolio
 
-This repo contains **4 real-world AWS security & networking projects** designed to mirror what cloud/security engineers do in production: segmented networks, centralized security logging, serverless hardening, and identity governance.
+![AWS](https://img.shields.io/badge/AWS-Security%20%2B%20Networking-232F3E?logo=amazonaws&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-Infrastructure%20as%20Code-844FBA?logo=terraform&logoColor=white)
+![Python](https://img.shields.io/badge/Python-Security%20Automation-3776AB?logo=python&logoColor=white)
+![IAM](https://img.shields.io/badge/IAM-Zero%20Trust-success)
+![Status](https://img.shields.io/badge/Status-Portfolio%20Ready-brightgreen)
 
-Each project is **fully written (no TODOs)** and includes:
-- A clear business scenario + security requirements
-- Architecture diagram (Mermaid)
-- Terraform IaC (modules + environments)
-- Validation steps + threat model + runbook
-- Cost notes + guardrails
+An enterprise-style AWS security and networking portfolio demonstrating **segmented network architecture, centralized inspection, zero-trust IAM guardrails, centralized detection engineering, secure serverless design, infrastructure as code, operational runbooks, validation, and evidence-based security controls**.
 
-> Date built: 2025-12-13
+## Portfolio Projects
 
-## Projects
-1. **01 – Secure Multi-Account Network Core (Hub/Spoke + Inspection VPC + AWS Network Firewall)**
-2. **02 – IAM Zero-Trust Guardrails (SCPs, Permission Boundaries, Break-Glass, Least-Privilege Roles)**
-3. **03 – Centralized Security Logging & Detection (CloudTrail + GuardDuty + Security Hub + OpenSearch Dashboards)**
-4. **04 – Secure Serverless API (Private access, WAF, Cognito, KMS, VPC endpoints, CloudWatch alarms)**
+| Project | Focus |
+|---|---|
+| `01-network-core` | Hub/spoke VPC architecture, Transit Gateway, centralized egress inspection, AWS Network Firewall, flow logs |
+| `02-iam-guardrails` | Permission boundaries, least-privilege roles, break-glass access, SCP policy pack, IAM monitoring |
+| `03-security-logging-detection` | CloudTrail, GuardDuty, Security Hub, EventBridge, OpenSearch, SNS, detection pipeline |
+| `04-secure-serverless-api` | API Gateway, Cognito, WAF, Lambda, DynamoDB, KMS, VPC endpoints, alarms |
 
-## Quick start (local)
-Prereqs:
-- Terraform >= 1.6
-- AWS CLI v2 authenticated (`aws sts get-caller-identity`)
-- A dedicated AWS account per environment is recommended.
+## Security Engineering Lifecycle
 
-Common workflow:
-```bash
-cd projects/01-network-core/iac/terraform/envs/dev
-terraform init
-terraform plan -var-file=dev.tfvars
-terraform apply -var-file=dev.tfvars
+```text
+Business Requirement
+        ↓
+Threat Model
+        ↓
+Security Architecture
+        ↓
+Preventive Controls
+        ↓
+Detective Controls
+        ↓
+Terraform
+        ↓
+Validation
+        ↓
+Operational Runbook
+        ↓
+Evidence
+        ↓
+Continuous Improvement
 ```
 
-## Safety
-These projects create AWS infrastructure. Always deploy into a sandbox account and set AWS Budgets.
+## Recruiter Quick Start
 
+**Networking:** start with `projects/01-network-core/README.md`  
+**Identity / IAM:** start with `projects/02-iam-guardrails/README.md`  
+**Detection Engineering:** start with `projects/03-security-logging-detection/README.md`  
+**Application Security:** start with `projects/04-secure-serverless-api/README.md`
 
-## Evidence of Deployment
+## Design Principles
 
-### AWS Secure Clickstream Ingestion Pipeline
-Secure, serverless ingestion of application clickstream data using **API Gateway, S3, Athena, and PostgreSQL (RDS)**, with logging and access controls.
+- Default-deny where practical.
+- No public data tiers unless explicitly required.
+- Human access uses federation/MFA concepts and short-lived roles.
+- Workloads use roles instead of long-lived access keys.
+- Sensitive services use KMS encryption.
+- Security findings are centralized and actionable.
+- Network paths are explicit and inspectable.
+- Infrastructure is reproducible through Terraform.
+- Every project includes threat modeling, validation, runbooks, and evidence.
+- Any benchmark, cost, or test result not executed in a live AWS account is labeled modeled or simulated.
 
-**Validated in AWS Console**
-- RDS PostgreSQL instance successfully provisioned (us-east-1)
-- Athena external table created over S3 clickstream data (JSON SerDe) and query executed successfully
-- API Gateway `POST /` method configured and deployed for ingestion
+## Technologies Demonstrated
 
-📁 Suggested location for the project (if you add the code here): `projects/aws-secure-clickstream-ingestion/`
+**VPC • Transit Gateway • AWS Network Firewall • NAT Gateway • VPC Flow Logs • IAM • Permission Boundaries • SCPs • CloudTrail • GuardDuty • Security Hub • EventBridge • OpenSearch • SNS • API Gateway • Cognito • AWS WAF • Lambda • DynamoDB • KMS • VPC Endpoints • CloudWatch • Terraform • Python**
 
+## Portfolio Scope
 
-## Repo Structure
-- `projects/<nn>-<name>/README.md` – scenario, architecture, how to deploy & validate
-- `projects/<nn>-<name>/iac/terraform/` – production-style IaC (modules + envs)
-- `projects/<nn>-<name>/docs/` – threat model, runbook, validation checklists
-- `projects/<nn>-<name>/scripts/` – helper scripts (AWS CLI), optional
-
-## License
-MIT (see `LICENSE`)
+This repository contains simulated enterprise security engagements and reference implementations. It does not claim a live production deployment unless deployment evidence is explicitly provided. Modeled cost/security outcomes are not represented as realized customer outcomes.

@@ -1,19 +1,14 @@
-# Runbook – IAM Guardrails
+# IAM Security Runbook
 
-## Routine operations
-- Review CloudTrail alerts weekly
-- Audit role permissions quarterly
-- Validate permission boundary is applied to newly created developer roles
+## Break-Glass Use
+1. Open incident/change record.
+2. Obtain approver.
+3. Authenticate with MFA.
+4. Assume emergency role for shortest practical session.
+5. Perform only incident-required action.
+6. Preserve CloudTrail evidence.
+7. End session.
+8. Conduct mandatory post-use review.
 
-## Break-glass workflow
-1. Incident commander approves use
-2. Operator authenticates with MFA and assumes `BreakGlassAdminRole`
-3. Perform minimal required actions
-4. Exit role, document actions
-5. Post-incident: review CloudTrail + tighten controls
-
-## Alert response
-When an IAM-risk alert triggers:
-- Identify principal (user/role), source IP, and API call
-- Confirm change intent (ticket/approval)
-- If suspicious: disable credentials / detach policies / rotate keys, and start IR playbook
+## Suspected Privilege Escalation
+Disable/contain affected principal, inspect CloudTrail, review policy versions/assume-role changes, remove persistence, rotate credentials where relevant, and document blast radius.

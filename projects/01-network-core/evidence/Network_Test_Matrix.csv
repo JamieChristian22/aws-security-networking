@@ -1,0 +1,6 @@
+Test,Expected,StatusType
+Dev-to-Prod direct route,Denied,Planned validation
+Spoke HTTPS egress,Allowed through inspection,Planned validation
+Prohibited egress port,Denied,Planned validation
+Firewall log event,Present,Planned validation
+Flow log reject,Present,Planned validation

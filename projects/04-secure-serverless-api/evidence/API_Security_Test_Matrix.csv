@@ -1,0 +1,8 @@
+Test,Expected
+NoToken,Denied
+ValidToken,Allowed
+ExpiredToken,Denied
+InvalidPayload,400
+WAFManagedRuleTest,Blocked
+RateLimitBurst,Throttled
+UnrelatedDynamoDBAccess,Denied

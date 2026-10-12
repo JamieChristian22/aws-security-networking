@@ -1,7 +1,0 @@
-Control,Action,Expected
-Boundary,CreateRoleWithoutBoundary,DENIED
-SCP,StopCloudTrail,DENIED
-SCP,LeaveOrganization,DENIED
-ReadOnlyRole,CreateS3Bucket,DENIED
-BreakGlass,AssumeWithoutMFA,DENIED
-BreakGlass,AssumeApprovedMFA,ALLOWED_AND_ALERTED

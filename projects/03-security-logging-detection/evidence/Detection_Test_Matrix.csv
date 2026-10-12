@@ -1,5 +1,0 @@
-Detection,SafeTest,Expected
-RootActivity,Sandbox root login event,Alert
-IAMPolicyChange,Create benign sandbox policy version,Alert
-HighFinding,Generate sample Security Hub finding,Alert and searchable record
-CloudTrailStop,Attempt in sandbox,Alert and investigation

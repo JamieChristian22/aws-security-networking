@@ -1,5 +1,0 @@
-Detection,Expected,Result,EvidenceType
-RootActivity,Alert,Pass,Simulated detection validation
-IAMPolicyChange,Alert,Pass,Simulated detection validation
-HighFinding,Alert and searchable record,Pass,Simulated detection validation
-CloudTrailStop,Alert and investigation,Pass,Simulated detection validation

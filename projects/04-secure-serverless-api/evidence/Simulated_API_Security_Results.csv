@@ -1,8 +1,0 @@
-Test,Expected,Result,EvidenceType
-NoToken,Denied,Pass,Simulated security validation
-ValidToken,Allowed,Pass,Simulated security validation
-ExpiredToken,Denied,Pass,Simulated security validation
-InvalidPayload,400,Pass,Simulated security validation
-WAFManagedRuleTest,Blocked,Pass,Simulated security validation
-RateLimitBurst,Throttled,Pass,Simulated security validation
-UnrelatedDynamoDBAccess,Denied,Pass,Simulated security validation

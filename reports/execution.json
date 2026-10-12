@@ -1,0 +1,116 @@
+{
+  "scope": "Offline execution only; no Terraform provider execution or live AWS",
+  "python": "3.12.14",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+  "checks": [
+    {
+      "name": "pytest",
+      "argv": [
+        "/workspace/scratch/f3ce9c8b6020/build/finalenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml=reports/junit.xml",
+        "--cov=projects/03-security-logging-detection/lambda",
+        "--cov=projects/04-secure-serverless-api/lambda",
+        "--cov-branch",
+        "--cov-fail-under=100",
+        "--cov-report=term-missing",
+        "--cov-report=json:reports/coverage.json"
+      ],
+      "started_at_utc": "2026-10-12T21:17:12.829530+00:00",
+      "ended_at_utc": "2026-10-12T21:17:18.744521+00:00",
+      "exit_code": 0
+    },
+    {
+      "name": "mutations",
+      "argv": [
+        "/workspace/scratch/f3ce9c8b6020/build/finalenv/bin/python",
+        "validation/mutation_checks.py",
+        "--output",
+        "reports/mutations.json"
+      ],
+      "started_at_utc": "2026-10-12T21:17:18.744563+00:00",
+      "ended_at_utc": "2026-10-12T21:17:22.197781+00:00",
+      "exit_code": 0
+    },
+    {
+      "name": "bandit",
+      "argv": [
+        "/workspace/scratch/f3ce9c8b6020/build/finalenv/bin/python",
+        "-m",
+        "bandit",
+        "-q",
+        "-r",
+        "projects",
+        "-f",
+        "json",
+        "-o",
+        "reports/bandit.json"
+      ],
+      "started_at_utc": "2026-10-12T21:17:22.197819+00:00",
+      "ended_at_utc": "2026-10-12T21:17:22.326582+00:00",
+      "exit_code": 0
+    },
+    {
+      "name": "repository-checks",
+      "argv": [
+        "/workspace/scratch/f3ce9c8b6020/build/finalenv/bin/python",
+        "validation/validate_portfolio.py"
+      ],
+      "started_at_utc": "2026-10-12T21:17:22.326624+00:00",
+      "ended_at_utc": "2026-10-12T21:17:22.379462+00:00",
+      "exit_code": 0
+    }
+  ],
+  "source_sha256": {
+    "projects/01-network-core/iac/terraform/.terraform.lock.hcl": "d88cf3d0c804e2243e2b806f82f2bafd93f4ff077f51f9f2e6ac6c467bd7f935",
+    "projects/01-network-core/iac/terraform/data.tf.json": "3d13efd1fec960bc2042ff740ca8034ff47695280d69ec5f9adbd22aa9699085",
+    "projects/01-network-core/iac/terraform/locals.tf.json": "b072e21135c5e9d228076dffe6f496a99423128db28e5e3b49b5e0a514d4ff8a",
+    "projects/01-network-core/iac/terraform/output.tf.json": "14a94503ce50e4795d8f1ea54eeb3054590ac6b8e4eba0da485084af389a5f67",
+    "projects/01-network-core/iac/terraform/provider.tf.json": "6740de650e701c278dea6f2dc095e9afe93dc7f40ecc3fc1005e84adb9d22d54",
+    "projects/01-network-core/iac/terraform/resource.tf.json": "11cd92a3061ea8e94e4812d2107176b9b2572abc33a318940aa99a1eb2d5a11a",
+    "projects/01-network-core/iac/terraform/terraform.tf.json": "119c7af38b77e3cdb8129eac95a6b60ea287e19e9d2e6994df6f36063f29325b",
+    "projects/01-network-core/iac/terraform/tests/controls.tftest.hcl": "4a8775de592a8c9eb045faab5045bb9967a1f8cdbc169f944fde375ab0e5eb16",
+    "projects/01-network-core/iac/terraform/variable.tf.json": "81ea06debae03c607e470b478fba9d74356d2526775a705f3b6701b0149dfe73",
+    "projects/02-iam-guardrails/docs/scp-pack/protect-security-services.json": "01ffd0575d818963f3ddf577de4cea06a427fbf9b4829d898c822832f0427d5a",
+    "projects/02-iam-guardrails/iac/terraform/.terraform.lock.hcl": "d88cf3d0c804e2243e2b806f82f2bafd93f4ff077f51f9f2e6ac6c467bd7f935",
+    "projects/02-iam-guardrails/iac/terraform/data.tf.json": "3d13efd1fec960bc2042ff740ca8034ff47695280d69ec5f9adbd22aa9699085",
+    "projects/02-iam-guardrails/iac/terraform/output.tf.json": "651e632bac90533fd2f86845ec37e04f2697ee4a7a0c348f2ef54a4c645e7f3d",
+    "projects/02-iam-guardrails/iac/terraform/provider.tf.json": "6740de650e701c278dea6f2dc095e9afe93dc7f40ecc3fc1005e84adb9d22d54",
+    "projects/02-iam-guardrails/iac/terraform/resource.tf.json": "f3c8bf58937df19e21fc3bdfc858dd8943c80d858e8f843d90c79c45555fab18",
+    "projects/02-iam-guardrails/iac/terraform/terraform.tf.json": "119c7af38b77e3cdb8129eac95a6b60ea287e19e9d2e6994df6f36063f29325b",
+    "projects/02-iam-guardrails/iac/terraform/tests/controls.tftest.hcl": "12273a437f11838191d1608636a84736cbcecb5e27a5b87756429b6a7b3297c9",
+    "projects/02-iam-guardrails/iac/terraform/variable.tf.json": "0aa7c76f480ef4f798737551a653bd5d9fc34972dfb463597024d3a2cbc3d2a1",
+    "projects/03-security-logging-detection/fixtures/securityhub-event.json": "88c40c071dbd9f76442c8c17d4e4233c068f6804c48b558a2beefedcd59f874f",
+    "projects/03-security-logging-detection/iac/terraform/.terraform.lock.hcl": "d88cf3d0c804e2243e2b806f82f2bafd93f4ff077f51f9f2e6ac6c467bd7f935",
+    "projects/03-security-logging-detection/iac/terraform/data.tf.json": "9ca5afa008626139797efb583838d83ad284967ec33a180492355d4ac77b5d3b",
+    "projects/03-security-logging-detection/iac/terraform/output.tf.json": "04de582d49e5fc2e7395d80084f7dae163970f10c3e3c969edf785d054175e4c",
+    "projects/03-security-logging-detection/iac/terraform/provider.tf.json": "6740de650e701c278dea6f2dc095e9afe93dc7f40ecc3fc1005e84adb9d22d54",
+    "projects/03-security-logging-detection/iac/terraform/resource.tf.json": "75def60f23e157e5c53bdf68bd13488a2b80ade4317dd0539be994e3817cf383",
+    "projects/03-security-logging-detection/iac/terraform/terraform.tf.json": "119c7af38b77e3cdb8129eac95a6b60ea287e19e9d2e6994df6f36063f29325b",
+    "projects/03-security-logging-detection/iac/terraform/tests/controls.tftest.hcl": "103e0444a62f084ec8b7a1fad8a0c8c55733bd12fa842620cdb1d61aadcc3a20",
+    "projects/03-security-logging-detection/iac/terraform/variable.tf.json": "0326ce49360d480f2b8269f21e675ebfafcccf09ce0574d11f2bdbf92493ea1b",
+    "projects/03-security-logging-detection/lambda/ingest_securityhub.py": "e85a5ed9bf4fc35271b42906eb4e8607c634c059370abaa0a81d46c9847d4292",
+    "projects/04-secure-serverless-api/iac/terraform/.terraform.lock.hcl": "d88cf3d0c804e2243e2b806f82f2bafd93f4ff077f51f9f2e6ac6c467bd7f935",
+    "projects/04-secure-serverless-api/iac/terraform/data.tf.json": "91de4a20d6c912b736b87ca83abc7663d1f90a0e2555b959695ec75182dc7ba2",
+    "projects/04-secure-serverless-api/iac/terraform/output.tf.json": "752fcffa08ee5a00c4048949a9f99e6e1baa15537adc651cfec3957983da8558",
+    "projects/04-secure-serverless-api/iac/terraform/provider.tf.json": "6740de650e701c278dea6f2dc095e9afe93dc7f40ecc3fc1005e84adb9d22d54",
+    "projects/04-secure-serverless-api/iac/terraform/resource.tf.json": "1eed5212c958283db54d7abe493ca2a9b0eb49a714ce5b00b90f067edd67408a",
+    "projects/04-secure-serverless-api/iac/terraform/terraform.tf.json": "119c7af38b77e3cdb8129eac95a6b60ea287e19e9d2e6994df6f36063f29325b",
+    "projects/04-secure-serverless-api/iac/terraform/tests/controls.tftest.hcl": "4b2b3d30927de0687f0476317d9151da000e9df690c3270c089fb51f008a5d0d",
+    "projects/04-secure-serverless-api/iac/terraform/variable.tf.json": "002ed8ea50c52485a55c29b0e52dcb31a2f759a1a40de56fd603b1367c9dd536",
+    "projects/04-secure-serverless-api/lambda/handler.py": "eb1a4a5fdae52f25cc0186f9ad5cb081d10c637f68d2317b849713ac93b2ca2e",
+    "tests/conftest.py": "768bc95e097ddd15b8cdb0b98b9fcb45ad3d61133619de4b3bb2ec3b8fa2ed81",
+    "tests/test_application.py": "ed6025ae0f877c266f2334d1cee06f0a7e1987a316500edf0a462516fd0f9ad0",
+    "tests/test_infrastructure.py": "3510b514359547c3c99d37eb4137183658ef4152ca10df04290db139f152fc23",
+    "tests/test_plan_review.py": "d5ac0dfde1203b6eaf65cc07d9b01314354b68348f466dcc5a55c648ab84deff",
+    "tests/test_resource_graph.py": "1dc26c3d1e812af95ccad3944b63cf42498396a8f4a62d60dfa1adf05c19f50e",
+    "tests/test_robustness.py": "88b0941eacd8ee9be526a9e044f1befcbceddb808f53948e578930f44484acc9",
+    "tests/test_sdk_integration.py": "1e737ae7d0464cf88e1edba723acc523aa127c90829eb4753fb068fc6d23ea3e",
+    "validation/mutation_checks.py": "da6f26bf892fc528295715acde3c70a081b0266fd6195a54d84cc0e324043b58",
+    "validation/review_plan.py": "b7000ac88f5bc1498b851f40c67dd5453802dc52142057621a4b4311d5fa3e74",
+    "validation/run_evidence.py": "16ee6738b776d18c8e1d3d1aff94905793d66787bb432f1008bfc637c920acda",
+    "validation/validate_portfolio.py": "881b36b593a184a9de1ed36e7a4e8214a5de911d1cf001ebe2888e174358a570"
+  }
+}

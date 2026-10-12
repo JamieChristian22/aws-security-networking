@@ -1,0 +1,53 @@
+{
+  "variable": {
+    "aws_region": {
+      "type": "string",
+      "default": "us-east-1"
+    },
+    "account_id": {
+      "type": "string",
+      "validation": {
+        "condition": "${can(regex(\"^[0-9]{12}$\", var.account_id))}",
+        "error_message": "Use the intended 12-digit sandbox account ID."
+      }
+    },
+    "name": {
+      "type": "string",
+      "validation": {
+        "condition": "${can(regex(\"^[a-z][a-z0-9-]{2,17}$\", var.name))}",
+        "error_message": "Use 3\u201318 lowercase letters, digits or hyphens; start with a letter."
+      },
+      "default": "iam-guardrai"
+    },
+    "alert_email": {
+      "type": "string",
+      "description": "Optional email subscription; confirm the SNS email after apply.",
+      "default": ""
+    },
+    "trusted_principal_arns": {
+      "type": "list(string)",
+      "description": "Existing operator role ARNs allowed to assume lab roles.",
+      "validation": {
+        "condition": "${length(var.trusted_principal_arns) > 0 && alltrue([for a in var.trusted_principal_arns : can(regex(\"^arn:aws[a-z-]*:iam::[0-9]{12}:role/.+\", a))])}",
+        "error_message": "Supply explicit existing IAM role ARNs."
+      }
+    },
+    "breakglass_principal_arns": {
+      "type": "list(string)",
+      "description": "Existing IAM user ARNs with enrolled MFA; this trust deliberately does not support federated MFA claims.",
+      "validation": {
+        "condition": "${length(var.breakglass_principal_arns) > 0 && alltrue([for a in var.breakglass_principal_arns : can(regex(\"^arn:aws[a-z-]*:iam::[0-9]{12}:user/.+\", a))])}",
+        "error_message": "Supply explicit IAM user ARNs with MFA."
+      }
+    },
+    "scp_target_id": {
+      "type": "string",
+      "description": "Optional dedicated sandbox OU/account. Empty creates no organization policy. Never use production/root without review.",
+      "default": "",
+      "validation": {
+        "condition": "${var.scp_target_id == \"\" || can(regex(\"^([0-9]{12}|ou-[a-z0-9]{4,32}-[a-z0-9]{8,32})$\", var.scp_target_id))}",
+        "error_message": "Use a dedicated sandbox account/OU ID or empty string; organization roots are not accepted."
+      }
+    }
+  }
+}

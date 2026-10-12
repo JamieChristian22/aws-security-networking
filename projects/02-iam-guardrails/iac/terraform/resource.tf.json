@@ -1,0 +1,240 @@
+{
+  "resource": {
+    "aws_sns_topic": {
+      "alerts": {
+        "name": "${\"${var.name}-alerts\"}"
+      }
+    },
+    "aws_sns_topic_subscription": {
+      "email": {
+        "count": "${var.alert_email == \"\" ? 0 : 1}",
+        "topic_arn": "${aws_sns_topic.alerts.arn}",
+        "protocol": "email",
+        "endpoint": "${var.alert_email}"
+      }
+    },
+    "aws_s3_bucket": {
+      "audit": {
+        "bucket_prefix": "${\"${var.name}-audit-\"}",
+        "force_destroy": false
+      }
+    },
+    "aws_s3_bucket_public_access_block": {
+      "audit": {
+        "bucket": "${aws_s3_bucket.audit.id}",
+        "block_public_acls": true,
+        "block_public_policy": true,
+        "ignore_public_acls": true,
+        "restrict_public_buckets": true
+      }
+    },
+    "aws_s3_bucket_versioning": {
+      "audit": {
+        "bucket": "${aws_s3_bucket.audit.id}",
+        "versioning_configuration": {
+          "status": "Enabled"
+        }
+      }
+    },
+    "aws_s3_bucket_server_side_encryption_configuration": {
+      "audit": {
+        "bucket": "${aws_s3_bucket.audit.id}",
+        "rule": {
+          "apply_server_side_encryption_by_default": {
+            "sse_algorithm": "AES256"
+          }
+        }
+      }
+    },
+    "aws_s3_bucket_ownership_controls": {
+      "audit": {
+        "bucket": "${aws_s3_bucket.audit.id}",
+        "rule": {
+          "object_ownership": "BucketOwnerEnforced"
+        }
+      }
+    },
+    "aws_s3_bucket_lifecycle_configuration": {
+      "audit": {
+        "bucket": "${aws_s3_bucket.audit.id}",
+        "rule": [
+          {
+            "id": "retention",
+            "status": "Enabled",
+            "filter": {
+              "prefix": ""
+            },
+            "expiration": {
+              "days": 365
+            },
+            "noncurrent_version_expiration": {
+              "noncurrent_days": 90
+            },
+            "abort_incomplete_multipart_upload": {
+              "days_after_initiation": 7
+            }
+          }
+        ]
+      }
+    },
+    "aws_cloudwatch_log_group": {
+      "audit": {
+        "name": "${\"/aws/cloudtrail/${var.name}\"}",
+        "retention_in_days": 30
+      }
+    },
+    "aws_iam_role": {
+      "trail": {
+        "name": "${\"${var.name}-trail\"}",
+        "assume_role_policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"Service\": \"cloudtrail.amazonaws.com\"}, \"Action\": \"sts:AssumeRole\"}]})}"
+      },
+      "auditor": {
+        "name": "${\"${var.name}-auditor\"}",
+        "assume_role_policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"AWS\": \"${var.trusted_principal_arns}\"}, \"Action\": \"sts:AssumeRole\"}]})}",
+        "permissions_boundary": "${aws_iam_policy.boundary.arn}"
+      },
+      "responder": {
+        "name": "${\"${var.name}-responder\"}",
+        "assume_role_policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"AWS\": \"${var.trusted_principal_arns}\"}, \"Action\": \"sts:AssumeRole\"}]})}",
+        "permissions_boundary": "${aws_iam_policy.boundary.arn}"
+      },
+      "deployer": {
+        "name": "${\"${var.name}-deployer\"}",
+        "assume_role_policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"AWS\": \"${var.trusted_principal_arns}\"}, \"Action\": \"sts:AssumeRole\"}]})}",
+        "permissions_boundary": "${aws_iam_policy.boundary.arn}"
+      },
+      "breakglass": {
+        "name": "${\"${var.name}-breakglass\"}",
+        "assume_role_policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"AWS\": \"${var.breakglass_principal_arns}\"}, \"Action\": \"sts:AssumeRole\", \"Condition\": {\"Bool\": {\"aws:MultiFactorAuthPresent\": \"true\"}, \"NumericLessThanEquals\": {\"aws:MultiFactorAuthAge\": \"3600\"}}}]})}",
+        "max_session_duration": 3600
+      }
+    },
+    "aws_iam_role_policy": {
+      "trail": {
+        "role": "${aws_iam_role.trail.id}",
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"logs:CreateLogStream\", \"logs:PutLogEvents\"], \"Resource\": \"${\\\"${aws_cloudwatch_log_group.audit.arn}:*\\\"}\"}]})}"
+      },
+      "auditor": {
+        "role": "${aws_iam_role.auditor.id}",
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"ec2:Describe*\", \"s3:GetBucket*\", \"s3:ListAllMyBuckets\", \"guardduty:Get*\", \"guardduty:List*\", \"securityhub:Get*\", \"securityhub:Describe*\", \"securityhub:List*\", \"cloudtrail:LookupEvents\", \"logs:Describe*\", \"logs:GetLogEvents\", \"logs:FilterLogEvents\"], \"Resource\": \"*\"}]})}"
+      },
+      "responder": {
+        "role": "${aws_iam_role.responder.id}",
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"ec2:Describe*\", \"s3:GetBucket*\", \"s3:ListAllMyBuckets\", \"guardduty:Get*\", \"guardduty:List*\", \"securityhub:Get*\", \"securityhub:Describe*\", \"securityhub:List*\", \"cloudtrail:LookupEvents\", \"logs:Describe*\", \"logs:GetLogEvents\", \"logs:FilterLogEvents\"], \"Resource\": \"*\"}]})}"
+      },
+      "deployer": {
+        "role": "${aws_iam_role.deployer.id}",
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"lambda:GetFunction\", \"lambda:UpdateFunctionCode\", \"lambda:UpdateFunctionConfiguration\"], \"Resource\": \"arn:${data.aws_partition.current.partition}:lambda:${var.aws_region}:${data.aws_caller_identity.current.account_id}:function:${var.name}-workload-*\"}]})}"
+      }
+    },
+    "aws_s3_bucket_policy": {
+      "audit": {
+        "bucket": "${aws_s3_bucket.audit.id}",
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Deny\", \"Principal\": \"*\", \"Action\": \"s3:*\", \"Resource\": [\"${aws_s3_bucket.audit.arn}\", \"${\\\"${aws_s3_bucket.audit.arn}/*\\\"}\"], \"Condition\": {\"Bool\": {\"aws:SecureTransport\": \"false\"}}}, {\"Effect\": \"Allow\", \"Principal\": {\"Service\": \"cloudtrail.amazonaws.com\"}, \"Action\": \"s3:GetBucketAcl\", \"Resource\": \"${aws_s3_bucket.audit.arn}\", \"Condition\": {\"StringEquals\": {\"aws:SourceArn\": \"arn:${data.aws_partition.current.partition}:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/${var.name}-trail\"}}}, {\"Effect\": \"Allow\", \"Principal\": {\"Service\": \"cloudtrail.amazonaws.com\"}, \"Action\": \"s3:PutObject\", \"Resource\": \"${\\\"${aws_s3_bucket.audit.arn}/AWSLogs/${var.account_id}/*\\\"}\", \"Condition\": {\"StringEquals\": {\"s3:x-amz-acl\": \"bucket-owner-full-control\", \"aws:SourceArn\": \"arn:${data.aws_partition.current.partition}:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/${var.name}-trail\"}}}]})}"
+      }
+    },
+    "aws_cloudtrail": {
+      "audit": {
+        "name": "${\"${var.name}-trail\"}",
+        "s3_bucket_name": "${aws_s3_bucket.audit.id}",
+        "is_multi_region_trail": true,
+        "include_global_service_events": true,
+        "enable_log_file_validation": true,
+        "enable_logging": true,
+        "cloud_watch_logs_group_arn": "${\"${aws_cloudwatch_log_group.audit.arn}:*\"}",
+        "cloud_watch_logs_role_arn": "${aws_iam_role.trail.arn}",
+        "event_selector": {
+          "read_write_type": "All",
+          "include_management_events": true
+        },
+        "depends_on": [
+          "aws_s3_bucket_policy.audit",
+          "aws_iam_role_policy.trail"
+        ]
+      }
+    },
+    "aws_iam_policy": {
+      "boundary": {
+        "name": "${\"${var.name}-boundary\"}",
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"ec2:Describe*\", \"s3:GetBucket*\", \"s3:ListAllMyBuckets\", \"guardduty:Get*\", \"guardduty:List*\", \"securityhub:Get*\", \"securityhub:Describe*\", \"securityhub:List*\", \"cloudtrail:LookupEvents\", \"logs:Describe*\", \"logs:GetLogEvents\", \"logs:FilterLogEvents\"], \"Resource\": \"*\"}, {\"Effect\": \"Allow\", \"Action\": [\"lambda:GetFunction\", \"lambda:UpdateFunctionCode\", \"lambda:UpdateFunctionConfiguration\"], \"Resource\": \"arn:${data.aws_partition.current.partition}:lambda:${var.aws_region}:${data.aws_caller_identity.current.account_id}:function:${var.name}-workload-*\"}, {\"Effect\": \"Deny\", \"Action\": [\"iam:*\", \"organizations:LeaveOrganization\", \"cloudtrail:StopLogging\", \"cloudtrail:DeleteTrail\", \"guardduty:DeleteDetector\", \"securityhub:DisableSecurityHub\", \"s3:PutBucketPublicAccessBlock\"], \"Resource\": \"*\"}]})}"
+      }
+    },
+    "aws_iam_role_policy_attachment": {
+      "emergency_admin": {
+        "role": "${aws_iam_role.breakglass.name}",
+        "policy_arn": "arn:${data.aws_partition.current.partition}:iam::aws:policy/AdministratorAccess"
+      }
+    },
+    "aws_cloudwatch_log_metric_filter": {
+      "breakglass": {
+        "name": "${\"${var.name}-breakglass\"}",
+        "log_group_name": "${aws_cloudwatch_log_group.audit.name}",
+        "pattern": "{ ($.eventName = AssumeRole) && ($.requestParameters.roleArn = \"${aws_iam_role.breakglass.arn}\") }",
+        "metric_transformation": {
+          "name": "breakglass",
+          "namespace": "Portfolio/IAM",
+          "value": "1",
+          "default_value": 0
+        }
+      },
+      "risky_iam": {
+        "name": "${\"${var.name}-risky_iam\"}",
+        "log_group_name": "${aws_cloudwatch_log_group.audit.name}",
+        "pattern": "{ ($.eventSource = iam.amazonaws.com) && (($.eventName = CreatePolicyVersion) || ($.eventName = AttachRolePolicy) || ($.eventName = PutRolePolicy) || ($.eventName = DeleteRolePermissionsBoundary)) }",
+        "metric_transformation": {
+          "name": "risky_iam",
+          "namespace": "Portfolio/IAM",
+          "value": "1",
+          "default_value": 0
+        }
+      }
+    },
+    "aws_cloudwatch_metric_alarm": {
+      "breakglass": {
+        "alarm_name": "${\"${var.name}-breakglass\"}",
+        "comparison_operator": "GreaterThanOrEqualToThreshold",
+        "evaluation_periods": 1,
+        "metric_name": "breakglass",
+        "namespace": "Portfolio/IAM",
+        "period": 300,
+        "statistic": "Sum",
+        "threshold": 1,
+        "dimensions": {},
+        "treat_missing_data": "notBreaching",
+        "alarm_actions": [
+          "${aws_sns_topic.alerts.arn}"
+        ]
+      },
+      "risky_iam": {
+        "alarm_name": "${\"${var.name}-risky_iam\"}",
+        "comparison_operator": "GreaterThanOrEqualToThreshold",
+        "evaluation_periods": 1,
+        "metric_name": "risky_iam",
+        "namespace": "Portfolio/IAM",
+        "period": 300,
+        "statistic": "Sum",
+        "threshold": 1,
+        "dimensions": {},
+        "treat_missing_data": "notBreaching",
+        "alarm_actions": [
+          "${aws_sns_topic.alerts.arn}"
+        ]
+      }
+    },
+    "aws_organizations_policy": {
+      "guardrail": {
+        "count": "${var.scp_target_id == \"\" ? 0 : 1}",
+        "name": "${\"${var.name}-sandbox-guardrail\"}",
+        "type": "SERVICE_CONTROL_POLICY",
+        "content": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Sid\": \"ProtectAudit\", \"Effect\": \"Deny\", \"Action\": [\"cloudtrail:StopLogging\", \"cloudtrail:DeleteTrail\", \"guardduty:DeleteDetector\", \"securityhub:DisableSecurityHub\", \"organizations:LeaveOrganization\"], \"Resource\": \"*\"}]})}"
+      }
+    },
+    "aws_organizations_policy_attachment": {
+      "guardrail": {
+        "count": "${var.scp_target_id == \"\" ? 0 : 1}",
+        "policy_id": "${aws_organizations_policy.guardrail[0].id}",
+        "target_id": "${var.scp_target_id}"
+      }
+    }
+  }
+}

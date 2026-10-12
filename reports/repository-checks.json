@@ -1,0 +1,10 @@
+{
+  "status": "PASS_OFFLINE",
+  "checks": {
+    "json": 33,
+    "python": 16,
+    "links": 75,
+    "live_cases": 28
+  },
+  "scope": "Syntax, local links, canonical structure and evidence ledger consistency only"
+}

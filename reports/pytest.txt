@@ -1,0 +1,22 @@
+........................................................................ [ 38%]
+........................................................................ [ 77%]
+..........................................                               [100%]
+=============================== warnings summary ===============================
+tests/test_sdk_integration.py: 33 warnings
+  /workspace/scratch/f3ce9c8b6020/build/finalenv/lib/python3.12/site-packages/botocore/auth.py:425: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    datetime_now = datetime.datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/f3ce9c8b6020/restored/source/aws-security-networking/reports/junit.xml -
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.14-final-0 _______________
+
+Name                                                                  Stmts   Miss Branch BrPart  Cover   Missing
+-----------------------------------------------------------------------------------------------------------------
+projects/03-security-logging-detection/lambda/ingest_securityhub.py     100      0     42      0   100%
+projects/04-secure-serverless-api/lambda/handler.py                     128      0     54      0   100%
+-----------------------------------------------------------------------------------------------------------------
+TOTAL                                                                   228      0     96      0   100%
+Coverage JSON written to file reports/coverage.json
+Required test coverage of 100% reached. Total coverage: 100.00%
+186 passed, 33 warnings in 5.47s

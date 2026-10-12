@@ -1,0 +1,11 @@
+{
+  "locals": {
+    "spokes": {
+      "dev": "10.10.0.0/16",
+      "prod": "10.20.0.0/16",
+      "shared": "10.30.0.0/16"
+    },
+    "spoke_subnets": "${{ for pair in setproduct(keys(local.spokes), range(2)) : \"${pair[0]}-${pair[1]}\" => { spoke = pair[0], az = pair[1] } }}",
+    "endpoint_by_az": "${{ for state in aws_networkfirewall_firewall.core.firewall_status[0].sync_states : state.availability_zone => state.attachment[0].endpoint_id }}"
+  }
+}

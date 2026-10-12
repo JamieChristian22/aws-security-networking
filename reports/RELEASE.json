@@ -1,0 +1,19 @@
+{
+  "created_at_utc": "2026-10-12T21:17:53.157029+00:00",
+  "baseline_commit": "6bac950d66ca1411bd664aa0ed891835d0468109",
+  "offline_tests": 186,
+  "handler_statement_coverage_percent": 100,
+  "handler_branch_coverage_percent": 100,
+  "targeted_mutations_detected": 8,
+  "targeted_mutations_total": 8,
+  "bandit_findings": 0,
+  "live_acceptance_cases": 28,
+  "architecture_diagrams": 5,
+  "provider_validation": "BLOCKED",
+  "terraform_mock_tests": "NOT_RUN",
+  "github_ci": "BLOCKED_GITHUB_403",
+  "live_aws_validation": "NOT_RUN",
+  "github_modified": false,
+  "plan_review_tests": 30,
+  "source_graph_tests": 9
+}

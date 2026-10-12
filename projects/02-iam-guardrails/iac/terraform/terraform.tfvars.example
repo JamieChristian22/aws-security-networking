@@ -1,0 +1,5 @@
+account_id = "111122223333"
+aws_region = "us-east-1"
+name = "iam-guardrai"
+trusted_principal_arns = ["arn:aws:iam::111122223333:role/SandboxSecurityOperator"]
+breakglass_principal_arns = ["arn:aws:iam::111122223333:user/EmergencyOperator"]

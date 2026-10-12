@@ -1,0 +1,9 @@
+ControlID,Scenario,Expected,Status,EvidenceRequired,Actual,ExecutedAtUTC,EvidencePath,Reviewer
+API-01,Missing/expired/wrong-pool token,401/403; no new item,NOT_RUN,Response and correlated access log,,,,
+API-02,Valid authenticated request,201 and one owner-scoped record,NOT_RUN,Response and authorized table inspection,,,,
+API-03,Exact replay,200 and unchanged item count,NOT_RUN,Two responses and table verification,,,,
+API-04,Changed payload same key,409,NOT_RUN,Response without new item,,,,
+API-05,Malformed fields/types,400,NOT_RUN,Synthetic invalid request responses,,,,
+API-06,WAF managed-rule match,403 block for reviewed synthetic input,NOT_RUN,Rule match log and response,,,,
+API-07,Controlled rate test,WAF block or gateway throttle as appropriate,NOT_RUN,Approved low-impact test window and distinct rule/response evidence,,,,
+API-08,PITR restore and cutover drill,Restored data reconciles and app tests pass,NOT_RUN,"Restore status, measured time and reconciliation",,,,

@@ -1,0 +1,1 @@
+Historical first-pass provider attempts. Init logs show installation; validate logs show failures, not passes. These were not rerun during the evidence upgrade. Absolute paths refer to the build environment. See ../VALIDATION_REPORT.md for interpretation.

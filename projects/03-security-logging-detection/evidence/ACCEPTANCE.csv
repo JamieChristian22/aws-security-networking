@@ -1,0 +1,8 @@
+ControlID,Scenario,Expected,Status,EvidenceRequired,Actual,ExecutedAtUTC,EvidencePath,Reviewer
+DET-01,Valid synthetic finding handler invoke,Archived and indexed,NOT_RUN,Invocation result and S3 object plus index verification,,,,
+DET-02,Exact fixture replay,Same version/document key,NOT_RUN,Repeated result and document identity,,,,
+DET-03,Index dependency failure,Exception then retry/failure destination,NOT_RUN,Controlled failure transcript and processing queue,,,,
+DET-04,EventBridge target delivery failure,Delivery queue captures event,NOT_RUN,Controlled target failure evidence,,,,
+DET-05,Matching high active new finding,SNS notification received,NOT_RUN,Actual service event plus notification,,,,
+DET-06,Unauthorized private search caller,No authorized data-plane access,NOT_RUN,Private path test with expected denied principal,,,,
+DET-07,CloudTrail management event,Delivered to audit stores,NOT_RUN,Fresh safe API event and correlated log,,,,

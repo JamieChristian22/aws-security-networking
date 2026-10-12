@@ -1,0 +1,16 @@
+{
+  "output": {
+    "trail_name": {
+      "value": "${aws_cloudtrail.audit.name}",
+      "description": "Management-event CloudTrail; data events are a separately reviewed cost/control decision."
+    },
+    "role_arns": {
+      "value": "${{ for k,v in {auditor=aws_iam_role.auditor, responder=aws_iam_role.responder, deployer=aws_iam_role.deployer, breakglass=aws_iam_role.breakglass}: k=>v.arn}}",
+      "description": "Roles for IAM simulation and sandbox assumption tests."
+    },
+    "boundary_arn": {
+      "value": "${aws_iam_policy.boundary.arn}",
+      "description": "Boundary with explicit allow envelope."
+    }
+  }
+}

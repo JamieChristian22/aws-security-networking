@@ -1,0 +1,18 @@
+{
+  "provider": {
+    "aws": {
+      "region": "${var.aws_region}",
+      "allowed_account_ids": [
+        "${var.account_id}"
+      ],
+      "default_tags": {
+        "tags": {
+          "Project": "${var.name}",
+          "Environment": "sandbox",
+          "ManagedBy": "Terraform",
+          "Owner": "Jamie Christian II"
+        }
+      }
+    }
+  }
+}

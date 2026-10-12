@@ -1,0 +1,8 @@
+ControlID,Scenario,Expected,Status,EvidenceRequired,Actual,ExecutedAtUTC,EvidencePath,Reviewer
+IAM-01,Auditor read inventory,Allowed,NOT_RUN,Simulator and real safe read,,,,
+IAM-02,Auditor bucket creation permission,Denied,NOT_RUN,IAM simulation with complete context,,,,
+IAM-03,Deployer changes unrelated Lambda,Denied,NOT_RUN,Resource-specific policy simulation,,,,
+IAM-04,Break-glass without MFA,STS denies assumption,NOT_RUN,Sanitized STS failure and CloudTrail event,,,,
+IAM-05,Approved MFA break-glass,STS succeeds and alert received,NOT_RUN,Redacted role session event and notification time,,,,
+IAM-06,CloudTrail delivery,Fresh validated management events,NOT_RUN,Trail status and delivered object,,,,
+IAM-07,Optional SCP enforcement,Protected actions denied when attached,NOT_RUN,"Reviewed sandbox target, policy attachment and safe test evidence",,,,

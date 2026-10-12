@@ -1,0 +1,2 @@
+Command: terraform fmt -check -recursive projects
+PASS: exit 0; no formatting changes required.

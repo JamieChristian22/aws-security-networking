@@ -1,0 +1,20 @@
+{
+  "output": {
+    "api_url": {
+      "value": "${\"${aws_api_gateway_stage.sandbox.invoke_url}/requests\"}",
+      "description": "POST endpoint. Supply Cognito ID token and Idempotency-Key."
+    },
+    "user_pool_id": {
+      "value": "${aws_cognito_user_pool.users.id}",
+      "description": "Admin-provisioned users with TOTP MFA."
+    },
+    "client_id": {
+      "value": "${aws_cognito_user_pool_client.app.id}",
+      "description": "Public SRP app client."
+    },
+    "table_name": {
+      "value": "${aws_dynamodb_table.requests.name}",
+      "description": "Deletion protection is enabled."
+    }
+  }
+}

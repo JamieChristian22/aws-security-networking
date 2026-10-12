@@ -1,0 +1,54 @@
+{
+  "variable": {
+    "aws_region": {
+      "type": "string",
+      "default": "us-east-1"
+    },
+    "account_id": {
+      "type": "string",
+      "validation": {
+        "condition": "${can(regex(\"^[0-9]{12}$\", var.account_id))}",
+        "error_message": "Use the intended 12-digit sandbox account ID."
+      }
+    },
+    "name": {
+      "type": "string",
+      "validation": {
+        "condition": "${can(regex(\"^[a-z][a-z0-9-]{2,17}$\", var.name))}",
+        "error_message": "Use 3\u201318 lowercase letters, digits or hyphens; start with a letter."
+      },
+      "default": "security-log"
+    },
+    "alert_email": {
+      "type": "string",
+      "description": "Optional email subscription; confirm the SNS email after apply.",
+      "default": ""
+    },
+    "azs": {
+      "type": "list(string)",
+      "validation": {
+        "condition": "${length(var.azs) == 2 && length(distinct(var.azs)) == 2}",
+        "error_message": "Select two different AZs in aws_region."
+      },
+      "default": [
+        "us-east-1a",
+        "us-east-1b"
+      ]
+    },
+    "create_guardduty": {
+      "type": "bool",
+      "description": "Set false when this account/region already has a detector.",
+      "default": true
+    },
+    "create_securityhub": {
+      "type": "bool",
+      "description": "Set false when already enabled; import instead if taking ownership.",
+      "default": true
+    },
+    "create_opensearch_service_role": {
+      "type": "bool",
+      "description": "Set true only if AWSServiceRoleForAmazonOpenSearchService does not exist.",
+      "default": false
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "output": {
+    "tgw_id": {
+      "value": "${aws_ec2_transit_gateway.core.id}",
+      "description": "Transit gateway for read-only route verification."
+    },
+    "firewall_arn": {
+      "value": "${aws_networkfirewall_firewall.core.arn}",
+      "description": "Firewall for sync and logging verification."
+    },
+    "spoke_vpc_ids": {
+      "value": "${{for k,v in aws_vpc.spoke: k=>v.id}}",
+      "description": "Spoke VPCs; no workloads are deployed."
+    },
+    "spoke_subnet_ids": {
+      "value": "${{for k,v in aws_subnet.spoke: k=>v.id}}",
+      "description": "Private subnets for temporary authorized test workloads."
+    }
+  }
+}

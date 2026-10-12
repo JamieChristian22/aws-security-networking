@@ -1,0 +1,394 @@
+{
+  "resource": {
+    "aws_sns_topic": {
+      "alerts": {
+        "name": "${\"${var.name}-alerts\"}"
+      }
+    },
+    "aws_sns_topic_subscription": {
+      "email": {
+        "count": "${var.alert_email == \"\" ? 0 : 1}",
+        "topic_arn": "${aws_sns_topic.alerts.arn}",
+        "protocol": "email",
+        "endpoint": "${var.alert_email}"
+      }
+    },
+    "aws_ec2_transit_gateway": {
+      "core": {
+        "description": "Segmented sandbox with centralized inspected egress",
+        "default_route_table_association": "disable",
+        "default_route_table_propagation": "disable",
+        "dns_support": "enable"
+      }
+    },
+    "aws_ec2_transit_gateway_route_table": {
+      "spokes": {
+        "transit_gateway_id": "${aws_ec2_transit_gateway.core.id}"
+      },
+      "inspection": {
+        "transit_gateway_id": "${aws_ec2_transit_gateway.core.id}"
+      }
+    },
+    "aws_vpc": {
+      "spoke": {
+        "for_each": "${local.spokes}",
+        "cidr_block": "${each.value}",
+        "enable_dns_support": true,
+        "enable_dns_hostnames": true,
+        "tags": {
+          "Name": "${\"${var.name}-${each.key}\"}"
+        }
+      },
+      "inspection": {
+        "cidr_block": "10.0.0.0/16",
+        "enable_dns_support": true,
+        "enable_dns_hostnames": true
+      }
+    },
+    "aws_subnet": {
+      "spoke": {
+        "for_each": "${local.spoke_subnets}",
+        "vpc_id": "${aws_vpc.spoke[each.value.spoke].id}",
+        "cidr_block": "${cidrsubnet(local.spokes[each.value.spoke], 8, each.value.az)}",
+        "availability_zone": "${var.azs[each.value.az]}",
+        "map_public_ip_on_launch": false
+      },
+      "tgw": {
+        "count": 2,
+        "vpc_id": "${aws_vpc.inspection.id}",
+        "cidr_block": "${cidrsubnet(aws_vpc.inspection.cidr_block, 8, count.index + 0)}",
+        "availability_zone": "${var.azs[count.index]}",
+        "map_public_ip_on_launch": false
+      },
+      "firewall": {
+        "count": 2,
+        "vpc_id": "${aws_vpc.inspection.id}",
+        "cidr_block": "${cidrsubnet(aws_vpc.inspection.cidr_block, 8, count.index + 2)}",
+        "availability_zone": "${var.azs[count.index]}",
+        "map_public_ip_on_launch": false
+      },
+      "nat": {
+        "count": 2,
+        "vpc_id": "${aws_vpc.inspection.id}",
+        "cidr_block": "${cidrsubnet(aws_vpc.inspection.cidr_block, 8, count.index + 4)}",
+        "availability_zone": "${var.azs[count.index]}",
+        "map_public_ip_on_launch": false
+      }
+    },
+    "aws_ec2_transit_gateway_vpc_attachment": {
+      "spoke": {
+        "for_each": "${local.spokes}",
+        "transit_gateway_id": "${aws_ec2_transit_gateway.core.id}",
+        "vpc_id": "${aws_vpc.spoke[each.key].id}",
+        "subnet_ids": "${[for k, v in local.spoke_subnets : aws_subnet.spoke[k].id if v.spoke == each.key]}",
+        "transit_gateway_default_route_table_association": false,
+        "transit_gateway_default_route_table_propagation": false
+      },
+      "inspection": {
+        "transit_gateway_id": "${aws_ec2_transit_gateway.core.id}",
+        "vpc_id": "${aws_vpc.inspection.id}",
+        "subnet_ids": "${aws_subnet.tgw[*].id}",
+        "appliance_mode_support": "enable",
+        "transit_gateway_default_route_table_association": false,
+        "transit_gateway_default_route_table_propagation": false
+      }
+    },
+    "aws_ec2_transit_gateway_route_table_association": {
+      "spoke": {
+        "for_each": "${local.spokes}",
+        "transit_gateway_attachment_id": "${aws_ec2_transit_gateway_vpc_attachment.spoke[each.key].id}",
+        "transit_gateway_route_table_id": "${aws_ec2_transit_gateway_route_table.spokes.id}"
+      },
+      "inspection": {
+        "transit_gateway_attachment_id": "${aws_ec2_transit_gateway_vpc_attachment.inspection.id}",
+        "transit_gateway_route_table_id": "${aws_ec2_transit_gateway_route_table.inspection.id}"
+      }
+    },
+    "aws_route_table": {
+      "spoke": {
+        "for_each": "${local.spokes}",
+        "vpc_id": "${aws_vpc.spoke[each.key].id}"
+      },
+      "tgw": {
+        "count": 2,
+        "vpc_id": "${aws_vpc.inspection.id}"
+      },
+      "firewall": {
+        "count": 2,
+        "vpc_id": "${aws_vpc.inspection.id}"
+      },
+      "nat": {
+        "count": 2,
+        "vpc_id": "${aws_vpc.inspection.id}"
+      }
+    },
+    "aws_route": {
+      "spoke_default": {
+        "for_each": "${local.spokes}",
+        "route_table_id": "${aws_route_table.spoke[each.key].id}",
+        "destination_cidr_block": "0.0.0.0/0",
+        "transit_gateway_id": "${aws_ec2_transit_gateway.core.id}",
+        "depends_on": [
+          "aws_ec2_transit_gateway_vpc_attachment.spoke"
+        ]
+      },
+      "tgw_to_firewall": {
+        "count": 2,
+        "route_table_id": "${aws_route_table.tgw[count.index].id}",
+        "destination_cidr_block": "0.0.0.0/0",
+        "vpc_endpoint_id": "${local.endpoint_by_az[var.azs[count.index]]}"
+      },
+      "firewall_to_nat": {
+        "count": 2,
+        "route_table_id": "${aws_route_table.firewall[count.index].id}",
+        "destination_cidr_block": "0.0.0.0/0",
+        "nat_gateway_id": "${aws_nat_gateway.egress[count.index].id}"
+      },
+      "nat_to_internet": {
+        "count": 2,
+        "route_table_id": "${aws_route_table.nat[count.index].id}",
+        "destination_cidr_block": "0.0.0.0/0",
+        "gateway_id": "${aws_internet_gateway.egress.id}"
+      },
+      "firewall_return": {
+        "for_each": "${local.spoke_subnets}",
+        "route_table_id": "${aws_route_table.firewall[each.value.az].id}",
+        "destination_cidr_block": "${local.spokes[each.value.spoke]}",
+        "depends_on": [
+          "aws_ec2_transit_gateway_vpc_attachment.inspection"
+        ],
+        "transit_gateway_id": "${aws_ec2_transit_gateway.core.id}"
+      },
+      "nat_return": {
+        "for_each": "${local.spoke_subnets}",
+        "route_table_id": "${aws_route_table.nat[each.value.az].id}",
+        "destination_cidr_block": "${local.spokes[each.value.spoke]}",
+        "depends_on": [
+          "aws_ec2_transit_gateway_vpc_attachment.inspection"
+        ],
+        "vpc_endpoint_id": "${local.endpoint_by_az[var.azs[each.value.az]]}"
+      }
+    },
+    "aws_route_table_association": {
+      "spoke": {
+        "for_each": "${local.spoke_subnets}",
+        "subnet_id": "${aws_subnet.spoke[each.key].id}",
+        "route_table_id": "${aws_route_table.spoke[each.value.spoke].id}"
+      },
+      "tgw": {
+        "count": 2,
+        "subnet_id": "${aws_subnet.tgw[count.index].id}",
+        "route_table_id": "${aws_route_table.tgw[count.index].id}"
+      },
+      "firewall": {
+        "count": 2,
+        "subnet_id": "${aws_subnet.firewall[count.index].id}",
+        "route_table_id": "${aws_route_table.firewall[count.index].id}"
+      },
+      "nat": {
+        "count": 2,
+        "subnet_id": "${aws_subnet.nat[count.index].id}",
+        "route_table_id": "${aws_route_table.nat[count.index].id}"
+      }
+    },
+    "aws_ec2_transit_gateway_route": {
+      "block_east_west": {
+        "for_each": "${local.spokes}",
+        "destination_cidr_block": "${each.value}",
+        "blackhole": true,
+        "transit_gateway_route_table_id": "${aws_ec2_transit_gateway_route_table.spokes.id}"
+      },
+      "default": {
+        "destination_cidr_block": "0.0.0.0/0",
+        "transit_gateway_attachment_id": "${aws_ec2_transit_gateway_vpc_attachment.inspection.id}",
+        "transit_gateway_route_table_id": "${aws_ec2_transit_gateway_route_table.spokes.id}"
+      },
+      "return": {
+        "for_each": "${local.spokes}",
+        "destination_cidr_block": "${each.value}",
+        "transit_gateway_attachment_id": "${aws_ec2_transit_gateway_vpc_attachment.spoke[each.key].id}",
+        "transit_gateway_route_table_id": "${aws_ec2_transit_gateway_route_table.inspection.id}"
+      }
+    },
+    "aws_internet_gateway": {
+      "egress": {
+        "vpc_id": "${aws_vpc.inspection.id}"
+      }
+    },
+    "aws_eip": {
+      "nat": {
+        "count": 2,
+        "domain": "vpc"
+      }
+    },
+    "aws_nat_gateway": {
+      "egress": {
+        "count": 2,
+        "allocation_id": "${aws_eip.nat[count.index].id}",
+        "subnet_id": "${aws_subnet.nat[count.index].id}",
+        "depends_on": [
+          "aws_internet_gateway.egress"
+        ]
+      }
+    },
+    "aws_networkfirewall_rule_group": {
+      "https": {
+        "name": "${\"${var.name}-https\"}",
+        "capacity": 100,
+        "type": "STATEFUL",
+        "rule_group": {
+          "stateful_rule_options": {
+            "rule_order": "STRICT_ORDER"
+          },
+          "rules_source": {
+            "rules_string": "pass tcp [10.10.0.0/16,10.20.0.0/16,10.30.0.0/16] any -> $EXTERNAL_NET 443 (flow:to_server; sid:1001; rev:1;)\n"
+          },
+          "rule_variables": {
+            "ip_sets": [
+              {
+                "key": "HOME_NET",
+                "ip_set": {
+                  "definition": [
+                    "10.10.0.0/16",
+                    "10.20.0.0/16",
+                    "10.30.0.0/16"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "aws_networkfirewall_firewall_policy": {
+      "core": {
+        "name": "${\"${var.name}-policy\"}",
+        "firewall_policy": {
+          "stateless_default_actions": [
+            "aws:forward_to_sfe"
+          ],
+          "stateless_fragment_default_actions": [
+            "aws:forward_to_sfe"
+          ],
+          "stateful_engine_options": {
+            "rule_order": "STRICT_ORDER"
+          },
+          "stateful_default_actions": [
+            "aws:drop_strict",
+            "aws:alert_strict"
+          ],
+          "stateful_rule_group_reference": [
+            {
+              "resource_arn": "${aws_networkfirewall_rule_group.https.arn}",
+              "priority": 1
+            }
+          ]
+        }
+      }
+    },
+    "aws_networkfirewall_firewall": {
+      "core": {
+        "name": "${var.name}",
+        "vpc_id": "${aws_vpc.inspection.id}",
+        "firewall_policy_arn": "${aws_networkfirewall_firewall_policy.core.arn}",
+        "subnet_mapping": [
+          {
+            "subnet_id": "${aws_subnet.firewall[0].id}"
+          },
+          {
+            "subnet_id": "${aws_subnet.firewall[1].id}"
+          }
+        ],
+        "delete_protection": false,
+        "firewall_policy_change_protection": false,
+        "subnet_change_protection": false
+      }
+    },
+    "aws_cloudwatch_log_group": {
+      "flow": {
+        "name": "${\"/aws/network-firewall/${var.name}/flow\"}",
+        "retention_in_days": 30
+      },
+      "alert": {
+        "name": "${\"/aws/network-firewall/${var.name}/alert\"}",
+        "retention_in_days": 30
+      },
+      "vpc": {
+        "name": "${\"/aws/vpc-flow/${var.name}\"}",
+        "retention_in_days": 30
+      }
+    },
+    "aws_networkfirewall_logging_configuration": {
+      "core": {
+        "firewall_arn": "${aws_networkfirewall_firewall.core.arn}",
+        "logging_configuration": {
+          "log_destination_config": [
+            {
+              "log_destination": {
+                "logGroup": "${aws_cloudwatch_log_group.flow.name}"
+              },
+              "log_destination_type": "CloudWatchLogs",
+              "log_type": "FLOW"
+            },
+            {
+              "log_destination": {
+                "logGroup": "${aws_cloudwatch_log_group.alert.name}"
+              },
+              "log_destination_type": "CloudWatchLogs",
+              "log_type": "ALERT"
+            }
+          ]
+        }
+      }
+    },
+    "aws_iam_role": {
+      "flow": {
+        "name": "${\"${var.name}-flow\"}",
+        "assume_role_policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"Service\": \"vpc-flow-logs.amazonaws.com\"}, \"Action\": \"sts:AssumeRole\"}]})}"
+      }
+    },
+    "aws_iam_role_policy": {
+      "flow": {
+        "role": "${aws_iam_role.flow.id}",
+        "policy": "${jsonencode({\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"logs:CreateLogStream\",\"logs:PutLogEvents\",\"logs:DescribeLogStreams\"],\"Resource\":\"${aws_cloudwatch_log_group.vpc.arn}:*\"},{\"Effect\":\"Allow\",\"Action\":\"logs:DescribeLogGroups\",\"Resource\":\"*\"}]})}"
+      }
+    },
+    "aws_flow_log": {
+      "spokes": {
+        "for_each": "${local.spokes}",
+        "vpc_id": "${aws_vpc.spoke[each.key].id}",
+        "traffic_type": "ALL",
+        "iam_role_arn": "${aws_iam_role.flow.arn}",
+        "log_destination": "${aws_cloudwatch_log_group.vpc.arn}",
+        "max_aggregation_interval": 60
+      },
+      "inspection": {
+        "vpc_id": "${aws_vpc.inspection.id}",
+        "traffic_type": "ALL",
+        "iam_role_arn": "${aws_iam_role.flow.arn}",
+        "log_destination": "${aws_cloudwatch_log_group.vpc.arn}",
+        "max_aggregation_interval": 60
+      }
+    },
+    "aws_cloudwatch_metric_alarm": {
+      "nat_ports": {
+        "count": 2,
+        "alarm_name": "${\"${var.name}-nat-ports-${count.index}\"}",
+        "comparison_operator": "GreaterThanOrEqualToThreshold",
+        "evaluation_periods": 1,
+        "metric_name": "ErrorPortAllocation",
+        "namespace": "AWS/NATGateway",
+        "period": 300,
+        "statistic": "Sum",
+        "threshold": 1,
+        "dimensions": {
+          "NatGatewayId": "${aws_nat_gateway.egress[count.index].id}"
+        },
+        "treat_missing_data": "notBreaching",
+        "alarm_actions": [
+          "${aws_sns_topic.alerts.arn}"
+        ]
+      }
+    }
+  }
+}

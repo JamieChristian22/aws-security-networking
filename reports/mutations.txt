@@ -1,0 +1,1 @@
+Detected 8/8 targeted defects

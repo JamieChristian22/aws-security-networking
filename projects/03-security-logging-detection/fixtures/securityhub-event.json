@@ -1,0 +1,18 @@
+{
+  "source": "aws.securityhub",
+  "detail-type": "Security Hub Findings - Imported",
+  "detail": {
+    "findings": [{
+      "Id": "synthetic-portfolio-test/001",
+      "ProductArn": "arn:aws:securityhub:us-east-1:111122223333:product/111122223333/default",
+      "AwsAccountId": "111122223333",
+      "Region": "us-east-1",
+      "UpdatedAt": "2026-01-01T00:00:00Z",
+      "Severity": {"Label": "HIGH"},
+      "Title": "SYNTHETIC: ingestion validation only",
+      "RecordState": "ACTIVE",
+      "Workflow": {"Status": "NEW"},
+      "Resources": [{"Type": "Other", "Id": "synthetic-resource"}]
+    }]
+  }
+}

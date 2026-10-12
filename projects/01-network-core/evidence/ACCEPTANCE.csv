@@ -1,0 +1,7 @@
+ControlID,Scenario,Expected,Status,EvidenceRequired,Actual,ExecutedAtUTC,EvidencePath,Reviewer
+NET-01,HTTPS egress from each AZ,Allowed through expected firewall/NAT path,NOT_RUN,Route snapshots plus firewall flow record and response,,,,
+NET-02,Dev to listening prod endpoint,Denied by explicit TGW segmentation,NOT_RUN,Positive listener proof plus blackhole route and failed cross-spoke request,,,,
+NET-03,Egress to prohibited port,Denied while HTTPS positive control succeeds,NOT_RUN,Firewall alert and source test output,,,,
+NET-04,Inspection return route,Same-AZ firewall traversed on return,NOT_RUN,AZ endpoint map and NAT/firewall route snapshots,,,,
+NET-05,Flow/firewall log delivery,Fresh records in configured groups,NOT_RUN,UTC-correlated log captures,,,,
+NET-06,Controlled AZ-path failure,No uninspected bypass; recovery behavior recorded,NOT_RUN,Reviewed exercise plan and measured observations,,,,

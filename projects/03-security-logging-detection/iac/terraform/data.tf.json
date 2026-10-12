@@ -1,0 +1,17 @@
+{
+  "data": {
+    "aws_caller_identity": {
+      "current": {}
+    },
+    "aws_partition": {
+      "current": {}
+    },
+    "archive_file": {
+      "ingest": {
+        "type": "zip",
+        "source_file": "${\"${path.module}/../../lambda/ingest_securityhub.py\"}",
+        "output_path": "${\"${path.module}/ingest.zip\"}"
+      }
+    }
+  }
+}

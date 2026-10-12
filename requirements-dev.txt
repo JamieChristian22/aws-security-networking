@@ -1,0 +1,6 @@
+pytest==8.3.5
+pytest-cov==6.1.1
+hypothesis==6.131.9
+moto[dynamodb,s3]==5.1.4
+boto3==1.37.38
+bandit==1.8.3

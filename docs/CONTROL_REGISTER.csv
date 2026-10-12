@@ -1,0 +1,29 @@
+ControlID,Project,Scenario,Expected,ImplementationPath,EvidenceLedger,LiveStatus
+NET-01,01-network-core,HTTPS egress from each AZ,Allowed through expected firewall/NAT path,projects/01-network-core/iac/terraform,projects/01-network-core/evidence/ACCEPTANCE.csv,NOT_RUN
+NET-02,01-network-core,Dev to listening prod endpoint,Denied by explicit TGW segmentation,projects/01-network-core/iac/terraform,projects/01-network-core/evidence/ACCEPTANCE.csv,NOT_RUN
+NET-03,01-network-core,Egress to prohibited port,Denied while HTTPS positive control succeeds,projects/01-network-core/iac/terraform,projects/01-network-core/evidence/ACCEPTANCE.csv,NOT_RUN
+NET-04,01-network-core,Inspection return route,Same-AZ firewall traversed on return,projects/01-network-core/iac/terraform,projects/01-network-core/evidence/ACCEPTANCE.csv,NOT_RUN
+NET-05,01-network-core,Flow/firewall log delivery,Fresh records in configured groups,projects/01-network-core/iac/terraform,projects/01-network-core/evidence/ACCEPTANCE.csv,NOT_RUN
+NET-06,01-network-core,Controlled AZ-path failure,No uninspected bypass; recovery behavior recorded,projects/01-network-core/iac/terraform,projects/01-network-core/evidence/ACCEPTANCE.csv,NOT_RUN
+IAM-01,02-iam-guardrails,Auditor read inventory,Allowed,projects/02-iam-guardrails/iac/terraform,projects/02-iam-guardrails/evidence/ACCEPTANCE.csv,NOT_RUN
+IAM-02,02-iam-guardrails,Auditor bucket creation permission,Denied,projects/02-iam-guardrails/iac/terraform,projects/02-iam-guardrails/evidence/ACCEPTANCE.csv,NOT_RUN
+IAM-03,02-iam-guardrails,Deployer changes unrelated Lambda,Denied,projects/02-iam-guardrails/iac/terraform,projects/02-iam-guardrails/evidence/ACCEPTANCE.csv,NOT_RUN
+IAM-04,02-iam-guardrails,Break-glass without MFA,STS denies assumption,projects/02-iam-guardrails/iac/terraform,projects/02-iam-guardrails/evidence/ACCEPTANCE.csv,NOT_RUN
+IAM-05,02-iam-guardrails,Approved MFA break-glass,STS succeeds and alert received,projects/02-iam-guardrails/iac/terraform,projects/02-iam-guardrails/evidence/ACCEPTANCE.csv,NOT_RUN
+IAM-06,02-iam-guardrails,CloudTrail delivery,Fresh validated management events,projects/02-iam-guardrails/iac/terraform,projects/02-iam-guardrails/evidence/ACCEPTANCE.csv,NOT_RUN
+IAM-07,02-iam-guardrails,Optional SCP enforcement,Protected actions denied when attached,projects/02-iam-guardrails/iac/terraform,projects/02-iam-guardrails/evidence/ACCEPTANCE.csv,NOT_RUN
+DET-01,03-security-logging-detection,Valid synthetic finding handler invoke,Archived and indexed,projects/03-security-logging-detection/iac/terraform,projects/03-security-logging-detection/evidence/ACCEPTANCE.csv,NOT_RUN
+DET-02,03-security-logging-detection,Exact fixture replay,Same version/document key,projects/03-security-logging-detection/iac/terraform,projects/03-security-logging-detection/evidence/ACCEPTANCE.csv,NOT_RUN
+DET-03,03-security-logging-detection,Index dependency failure,Exception then retry/failure destination,projects/03-security-logging-detection/iac/terraform,projects/03-security-logging-detection/evidence/ACCEPTANCE.csv,NOT_RUN
+DET-04,03-security-logging-detection,EventBridge target delivery failure,Delivery queue captures event,projects/03-security-logging-detection/iac/terraform,projects/03-security-logging-detection/evidence/ACCEPTANCE.csv,NOT_RUN
+DET-05,03-security-logging-detection,Matching high active new finding,SNS notification received,projects/03-security-logging-detection/iac/terraform,projects/03-security-logging-detection/evidence/ACCEPTANCE.csv,NOT_RUN
+DET-06,03-security-logging-detection,Unauthorized private search caller,No authorized data-plane access,projects/03-security-logging-detection/iac/terraform,projects/03-security-logging-detection/evidence/ACCEPTANCE.csv,NOT_RUN
+DET-07,03-security-logging-detection,CloudTrail management event,Delivered to audit stores,projects/03-security-logging-detection/iac/terraform,projects/03-security-logging-detection/evidence/ACCEPTANCE.csv,NOT_RUN
+API-01,04-secure-serverless-api,Missing/expired/wrong-pool token,401/403; no new item,projects/04-secure-serverless-api/iac/terraform,projects/04-secure-serverless-api/evidence/ACCEPTANCE.csv,NOT_RUN
+API-02,04-secure-serverless-api,Valid authenticated request,201 and one owner-scoped record,projects/04-secure-serverless-api/iac/terraform,projects/04-secure-serverless-api/evidence/ACCEPTANCE.csv,NOT_RUN
+API-03,04-secure-serverless-api,Exact replay,200 and unchanged item count,projects/04-secure-serverless-api/iac/terraform,projects/04-secure-serverless-api/evidence/ACCEPTANCE.csv,NOT_RUN
+API-04,04-secure-serverless-api,Changed payload same key,409,projects/04-secure-serverless-api/iac/terraform,projects/04-secure-serverless-api/evidence/ACCEPTANCE.csv,NOT_RUN
+API-05,04-secure-serverless-api,Malformed fields/types,400,projects/04-secure-serverless-api/iac/terraform,projects/04-secure-serverless-api/evidence/ACCEPTANCE.csv,NOT_RUN
+API-06,04-secure-serverless-api,WAF managed-rule match,403 block for reviewed synthetic input,projects/04-secure-serverless-api/iac/terraform,projects/04-secure-serverless-api/evidence/ACCEPTANCE.csv,NOT_RUN
+API-07,04-secure-serverless-api,Controlled rate test,WAF block or gateway throttle as appropriate,projects/04-secure-serverless-api/iac/terraform,projects/04-secure-serverless-api/evidence/ACCEPTANCE.csv,NOT_RUN
+API-08,04-secure-serverless-api,PITR restore and cutover drill,Restored data reconciles and app tests pass,projects/04-secure-serverless-api/iac/terraform,projects/04-secure-serverless-api/evidence/ACCEPTANCE.csv,NOT_RUN

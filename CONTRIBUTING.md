@@ -1,9 +1,3 @@
 # Contributing
 
-This repo is structured as a portfolio, but contributions are welcome.
-
-Guidelines:
-- Do not add placeholders (TODO, TBD, "fill in later").
-- Keep Terraform modules small and composable.
-- Include validation steps and a short threat model for any new project.
-- Prefer AWS managed services and least privilege.
+Create a branch, explain the control or failure scenario, and update implementation, tests and docs together. Run `make validate` and `make terraform-check`. Do not add a PASS row for an unexecuted check. Provider changes require lockfile review; deployment changes require a real plan in the target sandbox. Do not commit state, tokens, customer data or unredacted runtime evidence. Keep one canonical Terraform root per project.

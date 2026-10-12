@@ -1,19 +1,18 @@
-SHELL := /bin/bash
+.PHONY: test validate terraform-check
 
-help:
-	@echo "Targets:"
-	@echo "  tree      - print repo tree (depth 4)"
-	@echo "  fmt       - terraform fmt (all projects)"
-	@echo "  validate  - terraform validate for each env/dev"
+test:
+	python -m pytest -q
 
-tree:
-	@find . -maxdepth 4 -type f | sed 's|^\./||' | sort
+validate: test
+	python validation/validate_portfolio.py
 
-fmt:
-	@find projects -type f -name '*.tf' -print0 | xargs -0 terraform fmt
-
-validate:
-	@for d in $$(find projects -type d -path '*/iac/terraform/envs/*' -maxdepth 6); do \
-		echo "==> $$d"; \
-		(cd $$d && terraform init -backend=false -upgrade >/dev/null && terraform validate); \
+terraform-check:
+	@set -eu; for d in projects/*/iac/terraform; do \
+	 terraform -chdir="$$d" init -backend=false -input=false -lockfile=readonly; \
+	 terraform -chdir="$$d" validate -no-color; \
+	 terraform -chdir="$$d" test -no-color; \
 	done
+
+.PHONY: evidence
+evidence:
+	python validation/run_evidence.py

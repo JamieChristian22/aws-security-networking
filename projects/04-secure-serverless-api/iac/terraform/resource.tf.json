@@ -96,11 +96,11 @@
     "aws_iam_role_policy": {
       "api_logs": {
         "role": "${aws_iam_role.api.id}",
-        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"logs:CreateLogStream\", \"logs:PutLogEvents\"], \"Resource\": \"${\\\"${aws_cloudwatch_log_group.api.arn}:*\\\"}\"}]})}"
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"logs:CreateLogStream\", \"logs:PutLogEvents\"], \"Resource\": \"${aws_cloudwatch_log_group.api.arn}:*\"}]})}"
       },
       "api_data": {
         "role": "${aws_iam_role.api.id}",
-        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"dynamodb:PutItem\", \"dynamodb:GetItem\"], \"Resource\": \"${aws_dynamodb_table.requests.arn}\"}, {\"Effect\": \"Allow\", \"Action\": [\"kms:Decrypt\", \"kms:GenerateDataKey\", \"kms:DescribeKey\"], \"Resource\": \"${aws_kms_key.data.arn}\", \"Condition\": {\"StringEquals\": {\"kms:ViaService\": \"${\\\"dynamodb.${var.aws_region}.amazonaws.com\\\"}\"}}}]})}"
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"dynamodb:PutItem\", \"dynamodb:GetItem\"], \"Resource\": \"${aws_dynamodb_table.requests.arn}\"}, {\"Effect\": \"Allow\", \"Action\": [\"kms:Decrypt\", \"kms:GenerateDataKey\", \"kms:DescribeKey\"], \"Resource\": \"${aws_kms_key.data.arn}\", \"Condition\": {\"StringEquals\": {\"kms:ViaService\": \"dynamodb.${var.aws_region}.amazonaws.com\"}}}]})}"
       }
     },
     "aws_iam_role_policy_attachment": {

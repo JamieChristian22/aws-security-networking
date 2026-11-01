@@ -1,0 +1,28 @@
+# Local environments and test artifacts
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.hypothesis/
+.coverage
+htmlcov/
+.ruff_cache/
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Sensitive local Terraform execution artifacts
+**/.terraform/
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/*.tfplan
+**/terraform.tfvars
+**/backend.hcl
+**/outputs.local.json
+crash.log
+crash.*.log
+
+# Preserve explicit provider lockfiles once generated and reviewed.
+!**/.terraform.lock.hcl

@@ -1,5 +1,7 @@
 # Release readiness and evidence review
 
+> **2026-11-01 feature-branch update:** The earlier GitHub HTTP 403 is a historical packaging limitation. A separate branch now carries a GitHub Actions workflow and offline architecture/control explorer; check the live pull-request run before claiming provider-backed success. The legacy release report is intentionally preserved for provenance. No AWS resource deployment or 28-case live acceptance has occurred. `MANIFEST.sha256` is missing from the current GitHub checkout and is not falsely considered verified.
+
 ## Acceptance gates
 
 | Gate | Pass criteria | Current evidence |

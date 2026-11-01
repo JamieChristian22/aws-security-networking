@@ -13,6 +13,20 @@ Cloud Engineering • Cloud Security • AWS Infrastructure • Network Security
 
 ---
 
+## Live GitHub Validation & Interactive Demonstration
+
+[![AWS security CI](https://github.com/JamieChristian22/aws-security-networking/actions/workflows/aws-security-ci.yml/badge.svg)](https://github.com/JamieChristian22/aws-security-networking/actions/workflows/aws-security-ci.yml)
+
+**[Open the interactive architecture & control explorer](demo/security-controls.html)** · [Data lineage and evidence limitations](docs/INTERACTIVE_DEMO.md)
+
+The explorer provides a searchable, filterable view of the four AWS designs and **28 documented live-acceptance scenarios** from [the control register](docs/CONTROL_REGISTER.csv). Its controls are marked **NOT_RUN** until separately authorized live AWS tests supply real evidence. Download the HTML and open locally for interaction; the repository does not send data to cloud services.
+
+The [GitHub Actions workflow](.github/workflows/aws-security-ci.yml) runs isolated Python tests and mutation checks, source consistency, Bandit, provider-backed Terraform validation/mock tests and a full-history secret scan. It **does not apply infrastructure or require AWS credentials**. Check the actual workflow status for this commit before claiming a job passed.
+
+**Historical evidence note:** [reports/RELEASE.json](reports/RELEASE.json) and [reports/VALIDATION_REPORT.md](reports/VALIDATION_REPORT.md) are snapshots of an older environment, not the live status of this feature branch. `MANIFEST.sha256` is not present in the current GitHub repository, so `python scripts/verify_release.py` correctly fails until a reviewed package manifest is generated; passing CI is not a substitute for a signed release.
+
+---
+
 ## 📌 Executive Overview
 
 The AWS Security & Networking Portfolio is a comprehensive cloud security engineering laboratory designed to demonstrate the implementation of secure AWS infrastructure, identity controls, threat detection, network segmentation, and protected serverless applications.

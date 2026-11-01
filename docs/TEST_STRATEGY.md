@@ -35,6 +35,12 @@ The run emitted 33 botocore `datetime.utcnow()` deprecation warnings on Python 3
 
 Thirty synthetic plan-review tests exercise destructive changes, selected disabled or unknown protections, IPv4/IPv6 world ingress and malformed input. Nine source-graph tests check same-root resource references, per-bucket access-block relationships and deployed handler wiring. These checks supplement provider validation and live acceptance; they do not replace either.
 
+## Current feature branch workflow
+
+`.github/workflows/aws-security-ci.yml` defines separate `offline`, `terraform` and `secrets` jobs. Hosted CI results are authoritative for this branch. `validation/validate_portfolio.py` now **reports** missing local Terraform lockfiles under `provider_lockfiles_pending` rather than falsely treating a syntax-only check as provider execution. The `terraform` job initializes and tests each root with mock providers; provider lockfiles created there are not yet committed to the repository. Check the hosted run before asserting any provider-backed PASS.
+
+The available repository does not currently include `MANIFEST.sha256`. `scripts/verify_release.py` fails clearly in that case; a separate reviewed packaging process must generate a manifest before release checksum claims. The existing `reports/RELEASE.json` is historical evidence only.
+
 ## Gates still required
 
 1. Approve uploading the prepared source/workflow to a validation branch, or run the included workflow in an independently authorized checkout. Authorization was subsequently granted, but GitHub returned HTTP 403 for tree creation. No branch was created.

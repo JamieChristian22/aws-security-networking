@@ -152,15 +152,15 @@
     "aws_iam_role_policy": {
       "trail": {
         "role": "${aws_iam_role.trail.id}",
-        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"logs:CreateLogStream\", \"logs:PutLogEvents\"], \"Resource\": \"${\\\"${aws_cloudwatch_log_group.audit.arn}:*\\\"}\"}]})}"
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"logs:CreateLogStream\", \"logs:PutLogEvents\"], \"Resource\": \"${aws_cloudwatch_log_group.audit.arn}:*\"}]})}"
       },
       "ingest_logs": {
         "role": "${aws_iam_role.ingest.id}",
-        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"logs:CreateLogStream\", \"logs:PutLogEvents\"], \"Resource\": \"${\\\"${aws_cloudwatch_log_group.ingest.arn}:*\\\"}\"}]})}"
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"logs:CreateLogStream\", \"logs:PutLogEvents\"], \"Resource\": \"${aws_cloudwatch_log_group.ingest.arn}:*\"}]})}"
       },
       "ingest_data": {
         "role": "${aws_iam_role.ingest.id}",
-        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"s3:PutObject\"], \"Resource\": \"${\\\"${aws_s3_bucket.findings.arn}/findings/*\\\"}\"}, {\"Effect\": \"Allow\", \"Action\": [\"es:ESHttpPut\"], \"Resource\": \"${\\\"${aws_opensearch_domain.search.arn}/securityhub-*/_doc/*\\\"}\"}]})}"
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"s3:PutObject\"], \"Resource\": \"${aws_s3_bucket.findings.arn}/findings/*\"}, {\"Effect\": \"Allow\", \"Action\": [\"es:ESHttpPut\"], \"Resource\": \"${aws_opensearch_domain.search.arn}/securityhub-*/_doc/*\"}]})}"
       },
       "ingest_failure": {
         "role": "${aws_iam_role.ingest.id}",
@@ -170,11 +170,11 @@
     "aws_s3_bucket_policy": {
       "audit": {
         "bucket": "${aws_s3_bucket.audit.id}",
-        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Deny\", \"Principal\": \"*\", \"Action\": \"s3:*\", \"Resource\": [\"${aws_s3_bucket.audit.arn}\", \"${\\\"${aws_s3_bucket.audit.arn}/*\\\"}\"], \"Condition\": {\"Bool\": {\"aws:SecureTransport\": \"false\"}}}, {\"Effect\": \"Allow\", \"Principal\": {\"Service\": \"cloudtrail.amazonaws.com\"}, \"Action\": \"s3:GetBucketAcl\", \"Resource\": \"${aws_s3_bucket.audit.arn}\", \"Condition\": {\"StringEquals\": {\"aws:SourceArn\": \"arn:${data.aws_partition.current.partition}:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/${var.name}-trail\"}}}, {\"Effect\": \"Allow\", \"Principal\": {\"Service\": \"cloudtrail.amazonaws.com\"}, \"Action\": \"s3:PutObject\", \"Resource\": \"${\\\"${aws_s3_bucket.audit.arn}/AWSLogs/${var.account_id}/*\\\"}\", \"Condition\": {\"StringEquals\": {\"s3:x-amz-acl\": \"bucket-owner-full-control\", \"aws:SourceArn\": \"arn:${data.aws_partition.current.partition}:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/${var.name}-trail\"}}}]})}"
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Deny\", \"Principal\": \"*\", \"Action\": \"s3:*\", \"Resource\": [\"${aws_s3_bucket.audit.arn}\", \"${aws_s3_bucket.audit.arn}/*\"], \"Condition\": {\"Bool\": {\"aws:SecureTransport\": \"false\"}}}, {\"Effect\": \"Allow\", \"Principal\": {\"Service\": \"cloudtrail.amazonaws.com\"}, \"Action\": \"s3:GetBucketAcl\", \"Resource\": \"${aws_s3_bucket.audit.arn}\", \"Condition\": {\"StringEquals\": {\"aws:SourceArn\": \"arn:${data.aws_partition.current.partition}:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/${var.name}-trail\"}}}, {\"Effect\": \"Allow\", \"Principal\": {\"Service\": \"cloudtrail.amazonaws.com\"}, \"Action\": \"s3:PutObject\", \"Resource\": \"${aws_s3_bucket.audit.arn}/AWSLogs/${var.account_id}/*\", \"Condition\": {\"StringEquals\": {\"s3:x-amz-acl\": \"bucket-owner-full-control\", \"aws:SourceArn\": \"arn:${data.aws_partition.current.partition}:cloudtrail:${var.aws_region}:${data.aws_caller_identity.current.account_id}:trail/${var.name}-trail\"}}}]})}"
       },
       "findings": {
         "bucket": "${aws_s3_bucket.findings.id}",
-        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Deny\", \"Principal\": \"*\", \"Action\": \"s3:*\", \"Resource\": [\"${aws_s3_bucket.findings.arn}\", \"${\\\"${aws_s3_bucket.findings.arn}/*\\\"}\"], \"Condition\": {\"Bool\": {\"aws:SecureTransport\": \"false\"}}}]})}"
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Deny\", \"Principal\": \"*\", \"Action\": \"s3:*\", \"Resource\": [\"${aws_s3_bucket.findings.arn}\", \"${aws_s3_bucket.findings.arn}/*\"], \"Condition\": {\"Bool\": {\"aws:SecureTransport\": \"false\"}}}]})}"
       }
     },
     "aws_cloudtrail": {
@@ -261,7 +261,11 @@
             "cidr_blocks": [
               "10.80.0.0/16"
             ],
-            "description": "Private search endpoint"
+            "description": "Private search endpoint",
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "security_groups": [],
+            "self": false
           },
           {
             "from_port": 443,
@@ -270,7 +274,11 @@
             "prefix_list_ids": [
               "${aws_vpc_endpoint.s3.prefix_list_id}"
             ],
-            "description": "S3 gateway endpoint"
+            "description": "S3 gateway endpoint",
+            "cidr_blocks": [],
+            "ipv6_cidr_blocks": [],
+            "security_groups": [],
+            "self": false
           }
         ]
       },
@@ -285,7 +293,11 @@
             "security_groups": [
               "${aws_security_group.ingest.id}"
             ],
-            "description": "Signed ingestion only"
+            "description": "Signed ingestion only",
+            "cidr_blocks": [],
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "self": false
           }
         ]
       }
@@ -298,7 +310,7 @@
         "route_table_ids": [
           "${aws_route_table.private.id}"
         ],
-        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"s3:PutObject\"], \"Resource\": \"${\\\"${aws_s3_bucket.findings.arn}/*\\\"}\", \"Principal\": {\"AWS\": \"${aws_iam_role.ingest.arn}\"}}]})}"
+        "policy": "${jsonencode({\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Action\": [\"s3:PutObject\"], \"Resource\": \"${aws_s3_bucket.findings.arn}/*\", \"Principal\": {\"AWS\": \"${aws_iam_role.ingest.arn}\"}}]})}"
       }
     },
     "aws_opensearch_domain": {

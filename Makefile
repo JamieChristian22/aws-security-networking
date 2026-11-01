@@ -9,7 +9,7 @@ validate: test
 terraform-check:
 	@set -eu; for d in projects/*/iac/terraform; do \
 	 terraform -chdir="$$d" fmt -check -recursive; \
-	 terraform -chdir="$d" init -backend=false -input=false; \
+	 terraform -chdir="$$d" init -backend=false -input=false; \
 	 terraform -chdir="$$d" validate -no-color; \
 	 terraform -chdir="$$d" test -no-color; \
 	done

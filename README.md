@@ -1030,3 +1030,7 @@ This portfolio reflects practical learning, engineering problem-solving, and an 
 **🛡️ AWS Security & Networking Portfolio**
 
 *Building cloud security engineering skills through infrastructure design, implementation, automated validation, operational troubleshooting, and evidence-driven documentation.*
+
+## License and third-party materials
+
+See [LICENSE](LICENSE) for the repository license. Third-party code, datasets, images, and other assets retain their respective terms.

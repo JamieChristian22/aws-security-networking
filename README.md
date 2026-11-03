@@ -1034,3 +1034,7 @@ This portfolio reflects practical learning, engineering problem-solving, and an 
 ## License and third-party materials
 
 See [LICENSE](LICENSE) for the repository license. Third-party code, datasets, images, and other assets retain their respective terms.
+
+## Reviewer guide and asset provenance
+
+For a concise evidence-review path and asset-licensing verification checklist, see [REVIEWER_GUIDE.md](REVIEWER_GUIDE.md). Sample asset listings are not proof of ownership or redistribution rights.

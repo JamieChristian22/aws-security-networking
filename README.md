@@ -11,6 +11,8 @@ Cloud Engineering • Cloud Security • AWS Infrastructure • Network Security
 ![Security](https://img.shields.io/badge/Focus-Defense_in_Depth-0F766E)
 ![Testing](https://img.shields.io/badge/Offline_Tests-186_Passed-238636)
 
+**💜 Support the public project:** [Become a GitHub Sponsor](https://github.com/sponsors/JamieChristian22) to support the maintenance, reproducible security examples, and documentation of this MIT-licensed learning portfolio. Sponsorship is entirely optional.
+
 ---
 
 ## 📌 Executive Overview
